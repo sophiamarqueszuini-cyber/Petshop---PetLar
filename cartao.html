@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetLar Sanctuary — Cartão Digital</title>
+    <style>
+        :root {
+            --bg-color: #fcfbf9;
+            --text-main: #2c2a29;
+            --accent-gold: #c5a880;
+            --card-bg: #ffffff;
+            --border-color: #eae6df;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card-container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .profile-header {
+            margin-bottom: 25px;
+        }
+
+        .profile-logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background-color: var(--accent-gold);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 auto 15px auto;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(197, 168, 128, 0.3);
+        }
+
+        .profile-header h1 {
+            font-size: 22px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+        }
+
+        .profile-header p {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .bio {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .btn-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-link:hover {
+            background-color: var(--accent-gold);
+            color: #fff;
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        .btn-link span {
+            font-size: 18px;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: #999;
+            letter-spacing: 0.5px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card-container">
+        <!-- CABEÇALHO DO PERFIL -->
+        <div class="profile-header">
+            <div class="profile-logo">PetLar</div>
+            <h1>PetLar Sanctuary</h1>
+            <p>Hospitalidade & Spa Animal</p>
+        </div>
+
+        <p class="bio">Um refúgio exclusivo onde o design, a saúde integrativa e o afeto caminham juntos para o bem-estar do seu pet e de você.</p>
+
+        <!-- BOTÕES INTERATIVOS -->
+        <div class="links-list">
+            <a href="index.html" class="btn-link" target="_blank">
+                <span>🌐</span> Acessar Nosso Site <span>→</span>
+            </a>
+            <a href="https://wa.me/5511999999999?text=Olá!%20Gostaria%20de%20agendar%20um%20horário%20no%20PetLar%20Sanctuary." class="btn-link" target="_blank">
+                <span>💬</span> Agendamento via WhatsApp <span>→</span>
+            </a>
+            <a href="https://instagram.com" class="btn-link" target="_blank">
+                <span>📷</span> Acompanhe no Instagram <span>→</span>
+            </a>
+            <a href="https://maps.google.com" class="btn-link" target="_blank">
+                <span>📍</span> Como Chegar (São Paulo, SP) <span>→</span>
+            </a>
+        </div>
+
+        <!-- RODAPÉ DO CARTÃO -->
+        <div class="footer-note">
+            © 2026 PetLar Sanctuary. Todos os direitos reservados.
+        </div>
+    </div>
+
+</body>
+</html>

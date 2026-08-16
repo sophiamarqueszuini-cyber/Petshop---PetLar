@@ -1,0 +1,653 @@
+@import url('https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@300;400;500;600;700&display=swap');
+
+/* CONFIGURAÇÕES GLOBAIS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Zilla Slab', Georgia, serif;
+    background-color: #f4f3f0;
+    color: #1a1a1a;
+    line-height: 1.6;
+}
+
+.container {
+    width: 85%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 5%;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #fcfbf9;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.menu-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.menu-links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.menu-links a:hover {
+    color: #885533;
+}
+
+.menu-action {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.cart-link {
+    text-decoration: none;
+    color: #1a1a1a;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cart-link:hover {
+    color: #885533;
+}
+
+.btn-reservar {
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #1a1a1a;
+}
+
+/* HERO (CAPA) */
+.hero {
+    min-height: 80vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 6rem 5%;
+    background: linear-gradient(135deg, #f5f5f4 0%, #edd8c7 100%);
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.hero-content h1 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    max-width: 800px;
+    font-weight: 400;
+    line-height: 1.1;
+    margin-top: 1rem;
+}
+
+.sub-tag, .tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* NOSSO PROPÓSITO */
+.section-nosso-proposito {
+    padding: 7rem 0;
+}
+
+.section-nosso-proposito h2 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    max-width: 900px;
+    margin: 1rem 0 4rem 0;
+    font-weight: 400;
+    line-height: 1.2;
+}
+
+.nosso-proposito-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 5rem;
+    align-items: start;
+}
+
+.lead-text {
+    font-size: 1.15rem;
+    color: #444;
+    line-height: 1.8;
+}
+
+.nosso-proposito-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem; /* Ajustado para dar melhor respiro entre os cards */
+}
+
+/* Transformando cada item em um card */
+.stat-item {
+    background: #fdfdfd; /* Fundo levemente off-white */
+    border: 1px solid #eaeaea; /* Borda sutil */
+    padding: 2rem; /* Espaçamento interno */
+    border-radius: 12px; /* Cantos arredondados */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efeito opcional ao passar o mouse */
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+}
+
+.stat-item .num {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #888;
+}
+
+.stat-item h4 {
+    font-size: 1.05rem;
+    margin: 0.5rem 0;
+    font-weight: 600;
+}
+
+.stat-item p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+/* CUIDADOS, LOJA & ESPAÇO TUTOR */
+.section-cuidados {
+    padding: 7rem 5%;
+    background-color: #fcfbf9;
+}
+
+.section-cuidados h2 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin: 1rem 0;
+    font-weight: 400;
+}
+
+.section-desc {
+    color: #666;
+    margin-bottom: 4rem;
+}
+
+.atelier-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+}
+
+.gallery-card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+}
+
+.preco {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #885533;
+    display: block;
+    margin-bottom: 0.8rem;
+}
+
+.btn-add {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    background: #1a1a1a;
+    color: #fff;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.btn-add:hover {
+    background: #333;
+}
+
+
+/* SEÇÃO ESPAÇO TUTOR */
+#tutor.section-boutique {
+    padding: 7rem 5%;
+    background-color: #f4f0eb;
+}
+
+#tutor.section-boutique h2 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin: 1rem 0 4rem 0;
+    font-weight: 400;
+}
+
+.boutique-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+}
+
+.boutique-gallery .gallery-card {
+    background-color: #fff;
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.boutique-gallery .gallery-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+}
+
+.boutique-gallery .gallery-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.boutique-gallery .gallery-card p {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* LIFESTYLE */
+.section-lifestyle {
+    padding: 7rem 5%;
+    background-color: #fcfbf9;
+}
+
+.section-lifestyle h2 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin: 1rem 0 4rem 0;
+    font-weight: 400;
+}
+
+.lifestyle-split {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.grid-imgs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.grid-imgs img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.lifestyle-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.link-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dcd8d0;
+    font-size: 0.9rem;
+}
+
+.link-row a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 1.2rem;
+}
+
+/* APLICATIVO E CARTÃO INTERATIVO */
+.section-app {
+    padding: 7rem 5%;
+    background-color: #fcfbf9;
+}
+
+.app-sub {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+}
+
+.interactive-card {
+    background-color: #fcfbf9;
+    border: 1px solid #dcd8d0;
+    padding: 3rem;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.card-badge {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #885533;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.card-info h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.card-info p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 200px;
+}
+
+.btn-whatsapp {
+    background-color: #1a1a1a;
+    color: #fff;
+    text-align: center;
+    padding: 0.9rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.btn-whatsapp:hover {
+    background-color: #333;
+}
+
+.btn-portal {
+    background-color: transparent;
+    color: #1a1a1a;
+    text-align: center;
+    padding: 0.9rem 1.5rem;
+    border-radius: 4px;
+    border: 1px solid #1a1a1a;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.btn-portal:hover {
+    background-color: #eae7e2;
+}
+
+/* FOOTER */
+.footer {
+    background-color: #2b2320;
+    color: #f4f0eb;
+    padding: 5rem 5%;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: sans-serif;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-col h3, .footer-col h4 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f4f0eb;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.footer-col p {
+    font-size: 0.85rem;
+    color: #b0a59f;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 1024px) {
+    .atelier-gallery {
+        grid-template-columns: 1fr 1fr;
+    }
+    .lifestyle-split {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-links {
+        display: none;
+    }
+    
+    .manifesto-grid, 
+    .manifesto-stats, 
+    .atelier-gallery, 
+    .footer-grid,
+    .interactive-card {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+
+    .grid-imgs {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* CARTÃO DIGITAL*/
+.section-digital-card {
+    background-color: var(--bg-main);
+    padding: 100px 5%;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.digital-card-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 60px;
+}
+
+.digital-card-info {
+    flex: 1;
+    min-width: 300px;
+}
+
+.digital-card-container {
+    flex-shrink: 0;
+    width: 340px;
+}
+
+.card-scene {
+    width: 100%;
+    height: 480px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-flip-element {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    border-radius: 4px;
+}
+
+.card-scene.flipped .card-flip-element {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px 30px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.card-face-back {
+    transform: rotateY(180deg);
+    justify-content: flex-start;
+}
+
+.flip-instruction {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    font-family: sans-serif;
+}
+
+.card-front-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.card-logo-box {
+    width: 80px;
+    height: 80px;
+    background: #f0ece3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+    border-radius: 2px;
+    font-size: 24px;
+}
+
+.card-front-content h3 {
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.card-front-content p.brand-sub {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    font-family: sans-serif;
+    margin-bottom: 30px;
+}
+
+.card-front-content p.slogan {
+    font-size: 14px;
+    font-style: italic;
+    color: #776;
+}
+
+.card-back-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    font-family: sans-serif;
+    margin-bottom: 30px;
+}
+
+.contact-item {
+    margin-bottom: 22px;
+}
+
+.contact-item span.label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #887;
+    text-transform: uppercase;
+    font-family: sans-serif;
+    margin-bottom: 4px;
+}
+
+.contact-item a, 
+.contact-item p {
+    font-size: 14px;
+    color: var(--text-main);
+    text-decoration: none;
+    line-height: 1.4;
+    font-family: sans-serif;
+}
+
+.contact-item a:hover {
+    color: var(--accent-gold);
+}
