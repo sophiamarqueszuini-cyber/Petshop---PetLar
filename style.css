@@ -369,6 +369,7 @@ body {
     justify-content: space-between;
     align-items: center;
     gap: 2rem;
+    flex-wrap: wrap;
 }
 
 .card-badge {
@@ -381,55 +382,205 @@ body {
     margin-bottom: 0.5rem;
 }
 
+.card-info {
+    flex: 1;
+    min-width: 280px;
+}
+
 .card-info h3 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 500;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    color: #2c221e;
 }
 
 .card-info p {
     color: #666;
     font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
 }
 
-.card-actions {
+.quote {
+    font-style: italic;
+    color: #8c786d;
+}
+
+/* Container do Cartão 3D Integrado */
+.card-scene-container {
+    flex: 1;
+    min-width: 280px;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    min-width: 200px;
+    align-items: center;
 }
 
-.btn-whatsapp {
-    background-color: #1a1a1a;
+.flip-instruction {
+    font-size: 12px;
+    color: #8c786d;
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-scene {
+    width: 260px;
+    height: 440px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-flip-element {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    border-radius: 16px;
+}
+
+.card-scene.flipped .card-flip-element {
+    transform: rotateY(180deg);
+}
+
+/* Faces do Cartão */
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Frente do Cartão */
+.card-top-bg {
+    background-color: #f3ece1;
+    flex: 1.1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+}
+
+.card-logo {
+    width: 100%;
+    max-width: 130px;
+    height: auto;
+    object-fit: contain;
+}
+
+.card-bottom-content {
+    background-color: #211c19; /* Tom escuro igual ao cartão físico */
+    flex: 1.1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px;
     color: #fff;
-    text-align: center;
-    padding: 0.9rem 1.5rem;
-    border-radius: 4px;
+}
+
+.brand-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #e6dfd5;
+    letter-spacing: 1px;
+}
+
+.brand-divider {
+    font-size: 14px;
+    color: #c2b5a3;
+    margin-top: -10px;
+}
+
+.card-icons-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 150px;
+}
+
+.card-icon-btn {
+    background-color: #fff;
+    color: #211c19;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 16px;
+    transition: transform 0.2s, background-color 0.2s;
     text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background 0.3s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-.btn-whatsapp:hover {
-    background-color: #333;
+.card-icon-btn:hover {
+    transform: scale(1.1);
+    background-color: #f3ece1;
 }
 
-.btn-portal {
-    background-color: transparent;
-    color: #1a1a1a;
+.card-action-pill {
+    background-color: #fff;
+    color: #211c19;
+    font-size: 8.5px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
     text-align: center;
-    padding: 0.9rem 1.5rem;
-    border-radius: 4px;
-    border: 1px solid #1a1a1a;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: background 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.btn-portal:hover {
-    background-color: #eae7e2;
+/* Verso do Cartão */
+.card-face-back {
+    background-color: #fff;
+    color: #333;
+    transform: rotateY(180deg);
+    padding: 25px;
+    justify-content: flex-start;
+}
+
+.card-back-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #211c19;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f3ece1;
+    padding-bottom: 8px;
+}
+
+.contact-item {
+    margin-bottom: 12px;
+}
+
+.contact-item .label {
+    display: block;
+    font-size: 10px;
+    font-weight: bold;
+    color: #8c786d;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.contact-item a, .contact-item p {
+    font-size: 12px;
+    color: #211c19;
+    text-decoration: none;
+    margin: 0;
+}
+
+.contact-item a:hover {
+    color: #885533;
+    text-decoration: underline;
 }
 
 /* FOOTER */
