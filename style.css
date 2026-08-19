@@ -348,7 +348,7 @@ body {
     font-size: 1.2rem;
 }
 
-/* APLICATIVO E CARTÃO INTERATIVO */
+/* APLICATIVO E CARTÃO INTERATIVO (Atualizado) */
 .section-app {
     padding: 7rem 5%;
     background-color: #fcfbf9;
@@ -457,7 +457,7 @@ body {
     flex-direction: column;
 }
 
-/* Frente do Cartão */
+/* Frente do Cartão (Estilo idêntico à imagem enviada) */
 .card-top-bg {
     background-color: #f3ece1;
     flex: 1.1;
