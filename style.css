@@ -151,19 +151,17 @@ html {
 .nosso-proposito-stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem; /* Ajustado para dar melhor respiro entre os cards */
+    gap: 1.5rem; 
 }
 
-/* Transformando cada item em um card */
 .stat-item {
-    background: #fdfdfd; /* Fundo levemente off-white */
-    border: 1px solid #eaeaea; /* Borda sutil */
-    padding: 2rem; /* Espaçamento interno */
-    border-radius: 12px; /* Cantos arredondados */
+    background: #fdfdfd; 
+    border: 1px solid #eaeaea; 
+    padding: 2rem;
+    border-radius: 12px; 
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Efeito opcional ao passar o mouse */
 .stat-item:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
