@@ -2,25 +2,153 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrinho PetLar</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        body { font-family: 'Zilla Slab', serif; background: #fcfbf9; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .box { background: #fff; padding: 40px; border: 1px solid #e0e0e0; width: 100%; max-width: 400px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #1a1a1a; color: #fff; border: none; cursor: pointer; margin-top: 10px; }
-        h2 { font-weight: 400; margin-bottom: 20px; }
+        body { font-family: 'Zilla Slab', serif; background: #fcfbf9; color: #1a1a1a; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 2rem 5%; border-bottom: 1px solid #e0e0e0; background-color: #fcfbf9; }
+        .logo { font-size: 1.4rem; font-weight: 600; }
+        .menu-links { display: flex; gap: 2rem; }
+        .menu-links a { text-decoration: none; color: #333; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-links a:hover { color: #885533; }
+        .menu-action { display: flex; align-items: center; gap: 1.5rem; }
+        .cart-link { text-decoration: none; color: #1a1a1a; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .cart-link:hover { color: #885533; }
+        .container { width: 85%; max-width: 1200px; margin: 0 auto; padding: 40px 0; }
+        .carrinho-vazio { text-align: center; padding: 60px 20px; }
+        .carrinho-vazio p { font-size: 1.1rem; color: #666; margin-bottom: 20px; }
+        .carrinho-conteudo { background: #fff; padding: 30px; border-radius: 4px; }
+        .item-carrinho { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #e0e0e0; }
+        .item-carrinho:last-child { border-bottom: none; }
+        .info-produto { flex: 1; }
+        .info-produto h3 { margin: 0 0 8px 0; font-size: 1rem; font-weight: 500; }
+        .preco-unitario { color: #666; font-size: 0.9rem; }
+        .controles { display: flex; align-items: center; gap: 10px; margin: 10px 0 0 0; }
+        .quantidade-input { width: 50px; padding: 5px; border: 1px solid #ddd; text-align: center; }
+        .btn-remover { background: #ddd; color: #1a1a1a; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 0.85rem; }
+        .btn-remover:hover { background: #ccc; }
+        .subtotal { text-align: right; padding: 10px 0; color: #1a1a1a; font-weight: 600; }
+        .totalizador { background: #f9f7f4; padding: 20px; border-radius: 4px; margin-top: 30px; }
+        .linha-total { display: flex; justify-content: space-between; padding: 10px 0; font-size: 1.1rem; font-weight: 600; border-top: 2px solid #ddd; padding-top: 15px; }
+        .botoes-acao { display: flex; gap: 15px; margin-top: 30px; }
+        .btn-continuar { flex: 1; padding: 12px; background: #885533; color: #fff; border: none; cursor: pointer; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-radius: 3px; text-decoration: none; text-align: center; line-height: 12px; display: flex; align-items: center; justify-content: center; }
+        .btn-continuar:hover { background: #6d3f27; }
+        .btn-finalizar { flex: 1; padding: 12px; background: #1a1a1a; color: #fff; border: none; cursor: pointer; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-radius: 3px; text-decoration: none; text-align: center; line-height: 12px; display: flex; align-items: center; justify-content: center; }
+        .btn-finalizar:hover { background: #333; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>Carrinho PetLar</h2>
-        <p>Você precisa estar logado para finalizar o pedido.</p>
-        <input type="email" placeholder="E-mail">
-        <input type="password" placeholder="Senha">
-        <button>Entrar no Carrinho</button>
-        <p style="margin-top:20px; font-size: 0.9rem;">Não tem cadastro? <a href="#">Criar conta</a></p>
-        <hr style="margin: 20px 0;">
-        <p style="font-size: 0.8rem;">Opções: Pagamento Seguro, Entrega via Motoboy/Correios, Cupom de Desconto disponível no Checkout.</p>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html" style="text-decoration: none; color: #333;">PetLar</a>
+        </div>
+        <div class="menu-links">
+            <a href="index.html#nosso-proposito">Nosso Proposito</a>
+            <a href="index.html#cuidados">Cuidados</a>
+            <a href="index.html#boutique">Boutique</a>
+            <a href="index.html#tutor">Espaco Tutor</a>
+            <a href="index.html#contato">Contato</a>
+        </div>
+        <div class="menu-action">
+            <span class="cart-link" style="color: #885533;">Meu Carrinho</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="margin-bottom: 30px;">Meu Carrinho</h1>
+        
+        <div id="carrinho-vazio" class="carrinho-vazio" style="display: none;">
+            <p>Seu carrinho esta vazio</p>
+            <a href="index.html#boutique" style="color: #885533; text-decoration: underline;">Continuar comprando</a>
+        </div>
+
+        <div id="carrinho-conteudo" class="carrinho-conteudo" style="display: none;">
+            <div id="lista-produtos"></div>
+            
+            <div class="totalizador">
+                <div class="linha-total">
+                    <span>Total:</span>
+                    <span>R$ <span id="total-preco">0.00</span></span>
+                </div>
+            </div>
+
+            <div class="botoes-acao">
+                <a href="index.html#boutique" class="btn-continuar">Continuar Comprando</a>
+                <a href="#" class="btn-finalizar" onclick="finalizarPedido(event)">Finalizar Pedido</a>
+            </div>
+        </div>
     </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', carregarCarrinho);
+
+        function obterCarrinho() {
+            const carrinho = localStorage.getItem('petlarCarrinho');
+            return carrinho ? JSON.parse(carrinho) : [];
+        }
+
+        function salvarCarrinho(carrinho) {
+            localStorage.setItem('petlarCarrinho', JSON.stringify(carrinho));
+        }
+
+        function carregarCarrinho() {
+            const carrinho = obterCarrinho();
+            const listaDiv = document.getElementById('lista-produtos');
+            const carrinhoVazioDiv = document.getElementById('carrinho-vazio');
+            const carrinhoConteudoDiv = document.getElementById('carrinho-conteudo');
+
+            if (carrinho.length === 0) {
+                carrinhoVazioDiv.style.display = 'block';
+                carrinhoConteudoDiv.style.display = 'none';
+                return;
+            }
+
+            carrinhoVazioDiv.style.display = 'none';
+            carrinhoConteudoDiv.style.display = 'block';
+            listaDiv.innerHTML = '';
+
+            let total = 0;
+            carrinho.forEach(produto => {
+                const subtotal = produto.preco * produto.quantidade;
+                total += subtotal;
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item-carrinho';
+                itemDiv.innerHTML = '<div class="info-produto"><h3>' + produto.nome + '</h3><div class="preco-unitario">R$ ' + produto.preco.toFixed(2) + '</div><div class="controles"><button class="btn-remover" onclick="removerProduto(' + produto.id + ')">Remover</button></div></div><div><div style="text-align: right; margin-bottom: 10px;"><input type="number" class="quantidade-input" value="' + produto.quantidade + '" min="1" onchange="atualizarQuantidade(' + produto.id + ', this.value)"></div><div class="subtotal">R$ ' + subtotal.toFixed(2) + '</div></div>';
+                listaDiv.appendChild(itemDiv);
+            });
+
+            document.getElementById('total-preco').textContent = total.toFixed(2);
+        }
+
+        function removerProduto(id) {
+            let carrinho = obterCarrinho();
+            carrinho = carrinho.filter(p => p.id !== id);
+            salvarCarrinho(carrinho);
+            carregarCarrinho();
+        }
+
+        function atualizarQuantidade(id, novaQuantidade) {
+            const quantidade = parseInt(novaQuantidade) || 1;
+            let carrinho = obterCarrinho();
+            const produto = carrinho.find(p => p.id === id);
+            if (produto) {
+                produto.quantidade = Math.max(1, quantidade);
+                salvarCarrinho(carrinho);
+                carregarCarrinho();
+            }
+        }
+
+        function finalizarPedido(event) {
+            event.preventDefault();
+            const carrinho = obterCarrinho();
+            if (carrinho.length > 0) {
+                alert('Obrigado! Entre em contato conosco pelo WhatsApp para finalizar seu pedido.');
+                window.location.href = 'https://wa.me/5511988772211?text=Ola!%20Gostaria%20de%20finalizar%20meu%20pedido';
+            }
+        }
+    </script>
 </body>
 </html>

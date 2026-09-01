@@ -56,6 +56,15 @@ body {
     color: #885533;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+.logo a {
+  text-decoration: none;
+  display: inline-block;
+}
+
 .menu-action {
     display: flex;
     align-items: center;
