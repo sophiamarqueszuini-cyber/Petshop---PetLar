@@ -3,85 +3,575 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrinho PetLar</title>
+    <title>Carrinho de Compras | PetLar Sanctuary</title>
+    <link rel="icon" type="image/x-icon" href="Carrinho.png">
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Zilla Slab', serif; background: #fcfbf9; color: #1a1a1a; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 2rem 5%; border-bottom: 1px solid #e0e0e0; background-color: #fcfbf9; }
-        .logo { font-size: 1.4rem; font-weight: 600; }
-        .menu-links { display: flex; gap: 2rem; }
-        .menu-links a { text-decoration: none; color: #333; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-        .menu-links a:hover { color: #885533; }
-        .menu-action { display: flex; align-items: center; gap: 1.5rem; }
-        .cart-link { text-decoration: none; color: #1a1a1a; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .cart-link:hover { color: #885533; }
-        .container { width: 85%; max-width: 1200px; margin: 0 auto; padding: 40px 0; }
-        .carrinho-vazio { text-align: center; padding: 60px 20px; }
-        .carrinho-vazio p { font-size: 1.1rem; color: #666; margin-bottom: 20px; }
-        .carrinho-conteudo { background: #fff; padding: 30px; border-radius: 4px; }
-        .item-carrinho { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #e0e0e0; }
+        :root {
+            --bg-color: #fcfbf9;
+            --text-color: #1a1a1a;
+            --primary-color: #885533;
+            --primary-hover: #6d3f27;
+            --border-color: #e6e2dc;
+            --card-bg: #ffffff;
+            --accent-bg: #f9f7f4;
+            --success-color: #2e7d32;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: 'Zilla Slab', serif; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 1.5rem 6%; 
+            border-bottom: 1px solid var(--border-color); 
+            background-color: var(--card-bg); 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo a { 
+            font-size: 1.6rem; 
+            font-weight: 600; 
+            text-decoration: none; 
+            color: var(--text-color); 
+            letter-spacing: 0.5px;
+        }
+        .menu-links { 
+            display: flex; 
+            gap: 2.5rem; 
+        }
+        .menu-links a { 
+            text-decoration: none; 
+            color: #444; 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            transition: color 0.3s ease;
+        }
+        .menu-links a:hover { 
+            color: var(--primary-color); 
+        }
+        .cart-link { 
+            text-decoration: none; 
+            color: var(--primary-color); 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+
+        /* Container Principal */
+        .container { 
+            width: 90%; 
+            max-width: 1200px; 
+            margin: 40px auto; 
+            padding: 0 15px; 
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-color);
+        }
+
+        /* Carrinho Vazio */
+        .carrinho-vazio { 
+            text-align: center; 
+            padding: 100px 20px; 
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .carrinho-vazio p { 
+            font-size: 1.25rem; 
+            color: #666; 
+            margin-bottom: 25px; 
+        }
+        .carrinho-vazio a {
+            display: inline-block;
+            padding: 14px 28px;
+            background: var(--primary-color);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+        .carrinho-vazio a:hover { background: var(--primary-hover); }
+
+        /* Grid do Carrinho Layout */
+        .carrinho-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 35px;
+            align-items: start;
+        }
+
+        .coluna-principal {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card-secao {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .card-secao h3 {
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+
+        /* Banner Assinatura Recorrente */
+        .banner-assinatura {
+            background: linear-gradient(135deg, #f7f1eb 0%, #ecdcd0 100%);
+            border: 1px solid #d5c3b5;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .banner-assinatura p {
+            font-size: 0.95rem;
+            color: #5c3a21;
+            line-height: 1.4;
+        }
+        .banner-assinatura strong { color: var(--primary-color); }
+        .btn-assinar {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            transition: background 0.3s;
+        }
+        .btn-assinar:hover { background: var(--primary-hover); }
+
+        /* Lista de Produtos com Imagens */
+        .item-carrinho { 
+            display: flex; 
+            align-items: center; 
+            padding: 20px 0; 
+            border-bottom: 1px solid var(--border-color); 
+            gap: 20px;
+        }
         .item-carrinho:last-child { border-bottom: none; }
+
+        .produto-img {
+            width: 85px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--accent-bg);
+        }
+
         .info-produto { flex: 1; }
-        .info-produto h3 { margin: 0 0 8px 0; font-size: 1rem; font-weight: 500; }
-        .preco-unitario { color: #666; font-size: 0.9rem; }
-        .controles { display: flex; align-items: center; gap: 10px; margin: 10px 0 0 0; }
-        .quantidade-input { width: 50px; padding: 5px; border: 1px solid #ddd; text-align: center; }
-        .btn-remover { background: #ddd; color: #1a1a1a; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-size: 0.85rem; }
-        .btn-remover:hover { background: #ccc; }
-        .subtotal { text-align: right; padding: 10px 0; color: #1a1a1a; font-weight: 600; }
-        .totalizador { background: #f9f7f4; padding: 20px; border-radius: 4px; margin-top: 30px; }
-        .linha-total { display: flex; justify-content: space-between; padding: 10px 0; font-size: 1.1rem; font-weight: 600; border-top: 2px solid #ddd; padding-top: 15px; }
-        .botoes-acao { display: flex; gap: 15px; margin-top: 30px; }
-        .btn-continuar { flex: 1; padding: 12px; background: #885533; color: #fff; border: none; cursor: pointer; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-radius: 3px; text-decoration: none; text-align: center; line-height: 12px; display: flex; align-items: center; justify-content: center; }
-        .btn-continuar:hover { background: #6d3f27; }
-        .btn-finalizar { flex: 1; padding: 12px; background: #1a1a1a; color: #fff; border: none; cursor: pointer; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; border-radius: 3px; text-decoration: none; text-align: center; line-height: 12px; display: flex; align-items: center; justify-content: center; }
-        .btn-finalizar:hover { background: #333; }
+        .info-produto h4 { margin: 0 0 6px 0; font-size: 1.05rem; font-weight: 600; }
+        .preco-unitario { color: #777; font-size: 0.9rem; }
+
+        .acoes-item {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        .controles { display: flex; align-items: center; gap: 10px; }
+        .quantidade-input { 
+            width: 55px; 
+            padding: 8px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px;
+            text-align: center; 
+            font-family: inherit;
+            background: var(--bg-color);
+            font-size: 0.95rem;
+        }
+        .btn-remover { 
+            background: transparent; 
+            color: #d9534f; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 0.85rem; 
+            text-decoration: underline; 
+            font-weight: 500;
+        }
+        .btn-remover:hover { color: #b52b27; }
+        .subtotal { color: var(--text-color); font-weight: 600; font-size: 1.05rem; min-width: 90px; text-align: right; }
+
+        /* Frete e Retirada */
+        .frete-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .frete-box input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: inherit;
+            background: var(--bg-color);
+            font-size: 0.95rem;
+        }
+        .btn-calcular {
+            padding: 12px 20px;
+            background: #222;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: background 0.3s;
+        }
+        .btn-calcular:hover { background: #444; }
+
+        .opcoes-entrega {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .opcao-radio {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .opcao-radio:hover { border-color: var(--primary-color); background: var(--accent-bg); }
+        .opcao-radio input { accent-color: var(--primary-color); transform: scale(1.1); }
+
+        /* Formas de Pagamento Cards */
+        .grid-pagamento {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .card-pgto {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            background: var(--bg-color);
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .card-pgto strong { color: var(--text-color); font-size: 0.9rem; }
+
+        /* Coluna Lateral: Resumo */
+        .resumo-lateral {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            position: sticky;
+            top: 100px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .resumo-lateral h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .cupom-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        .cupom-container input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: var(--bg-color);
+        }
+        .btn-cupom {
+            padding: 10px 16px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .btn-cupom:hover { background: rgba(136, 85, 51, 0.08); }
+
+        .linhas-valores {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            color: #555;
+        }
+        .linha-val {
+            display: flex;
+            justify-content: space-between;
+        }
+        .linha-val.frete-gratis {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .total-geral {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-color);
+            padding: 20px 0 5px 0;
+        }
+        .parcelamento-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 25px;
+            text-align: right;
+        }
+
+        .btn-finalizar {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            text-align: center;
+            transition: background 0.3s;
+            box-shadow: 0 4px 10px rgba(136, 85, 51, 0.2);
+        }
+        .btn-finalizar:hover { background: var(--primary-hover); }
+
+        .acoes-secundarias {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+        .acoes-secundarias a {
+            color: #666;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .acoes-secundarias a:hover { color: var(--primary-color); }
+
+        /* Responsividade */
+        @media (max-width: 900px) {
+            .carrinho-layout { grid-template-columns: 1fr; }
+            .menu-links { display: none; }
+            .resumo-lateral { position: static; }
+            .grid-pagamento { grid-template-columns: 1fr; }
+            .item-carrinho { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .acoes-item { width: 100%; justify-content: space-between; }
+        }
     </style>
 </head>
 <body>
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo">
-            <a href="index.html" style="text-decoration: none; color: #333;">PetLar</a>
+            <a href="index.html">PetLar</a>
         </div>
         <div class="menu-links">
-            <a href="index.html#nosso-proposito">Nosso Proposito</a>
+            <a href="index.html#nosso-proposito">Nosso Propósito</a>
             <a href="index.html#cuidados">Cuidados</a>
             <a href="index.html#boutique">Boutique</a>
-            <a href="index.html#tutor">Espaco Tutor</a>
+            <a href="index.html#tutor">Espaço Tutor</a>
             <a href="index.html#contato">Contato</a>
         </div>
         <div class="menu-action">
-            <span class="cart-link" style="color: #885533;">Meu Carrinho</span>
+            <span class="cart-link">Meu Carrinho</span>
         </div>
     </nav>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <div class="container">
-        <h1 style="margin-bottom: 30px;">Meu Carrinho</h1>
+        <h1>Meu Carrinho</h1>
         
+        <!-- Carrinho Vazio -->
         <div id="carrinho-vazio" class="carrinho-vazio" style="display: none;">
-            <p>Seu carrinho esta vazio</p>
-            <a href="index.html#boutique" style="color: #885533; text-decoration: underline;">Continuar comprando</a>
+            <p>Seu carrinho está vazio no momento.</p>
+            <a href="index.html#boutique">Explorar a Boutique</a>
         </div>
 
+        <!-- Conteúdo do Carrinho Preenchido -->
         <div id="carrinho-conteudo" class="carrinho-conteudo" style="display: none;">
-            <div id="lista-produtos"></div>
-            
-            <div class="totalizador">
-                <div class="linha-total">
-                    <span>Total:</span>
-                    <span>R$ <span id="total-preco">0.00</span></span>
-                </div>
-            </div>
+            <div class="carrinho-layout">
+                
+                <div class="coluna-principal">
+                    
+                    <div class="card-secao">
+                        <h3>Produtos no Carrinho</h3>
+                        <div id="lista-produtos"></div>
+                    </div>
 
-            <div class="botoes-acao">
-                <a href="index.html#boutique" class="btn-continuar">Continuar Comprando</a>
-                <a href="#" class="btn-finalizar" onclick="finalizarPedido(event)">Finalizar Pedido</a>
+                    <div class="banner-assinatura">
+                        <div>
+                            <p><strong>Clube de Assinaturas PetLar:</strong> Receba seus produtos favoritos automaticamente e ganhe <strong>10% de desconto + Frete Grátis</strong>.</p>
+                        </div>
+                        <button class="btn-assinar" onclick="alert('Funcionalidade de assinatura selecionada para este pedido!')">Assinar</button>
+                    </div>
+
+                    <div class="card-secao">
+                        <h3>📍 Calcular Frete e Opções de Retirada</h3>
+                        <div class="frete-box">
+                            <input type="text" id="cep-input" placeholder="Digite seu CEP (Ex: 05508-000)" maxlength="9">
+                            <button class="btn-calcular" onclick="calcularFrete()">Consultar</button>
+                        </div>
+                        <div class="opcoes-entrega" id="opcoes-entrega" style="display: none;">
+                            <label class="opcao-radio">
+                                <div>
+                                    <input type="radio" name="tipo-entrega" checked onchange="atualizarFreteValor(0)">
+                                    <strong>Retirar na Loja PetLar (Pinheiros)</strong> — Pronto em 45 min
+                                </div>
+                                <span style="color: var(--success-color); font-weight: bold;">Grátis</span>
+                            </label>
+                            <label class="opcao-radio">
+                                <div>
+                                    <input type="radio" name="tipo-entrega" onchange="atualizarFreteValor(15.90)">
+                                    <strong>Entrega Padrão PetLar</strong> — 2 a 3 dias úteis
+                                </div>
+                                <span>R$ 15,90</span>
+                            </label>
+                            <label class="opcao-radio">
+                                <div>
+                                    <input type="radio" name="tipo-entrega" onchange="atualizarFreteValor(24.90)">
+                                    <strong>Entrega Expressa PetLar Já</strong> — Hoje mesmo
+                                </div>
+                                <span>R$ 24,90</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card-secao">
+                        <h3>💳 Formas de Pagamento Aceitas</h3>
+                        <p style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">Selecione sua forma preferida na próxima etapa:</p>
+                        <div class="grid-pagamento">
+                            <div class="card-pgto">
+                                <strong>⚡ PIX</strong>
+                                <span>5% de desconto automático</span>
+                            </div>
+                            <div class="card-pgto">
+                                <strong>💳 Cartão de Crédito</strong>
+                                <span>Até 6x sem juros</span>
+                            </div>
+                            <div class="card-pgto">
+                                <strong>📄 Boleto Bancário</strong>
+                                <span>Vencimento em 1 dia útil</span>
+                            </div>
+                            <div class="card-pgto">
+                                <strong>📱 Carteiras Digitais</strong>
+                                <span>Apple Pay / Google Pay</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="resumo-lateral">
+                    <h3>Resumo do Pedido</h3>
+                    
+                    <div class="cupom-container">
+                        <input type="text" id="cupom-input" placeholder="Cupom de desconto">
+                        <button class="btn-cupom" onclick="aplicarCupom()">Aplicar</button>
+                    </div>
+
+                    <div class="linhas-valores">
+                        <div class="linha-val">
+                            <span>Subtotal</span>
+                            <span>R$ <span id="subtotal-produtos">0.00</span></span>
+                        </div>
+                        <div class="linha-val">
+                            <span>Frete / Retirada</span>
+                            <span id="valor-frete-display">Grátis</span>
+                        </div>
+                        <div class="linha-val" id="desconto-linha" style="display: none; color: var(--success-color);">
+                            <span>Desconto aplicado</span>
+                            <span>- R$ <span id="valor-desconto">0.00</span></span>
+                        </div>
+                    </div>
+
+                    <div class="total-geral">
+                        <span>Total:</span>
+                        <span>R$ <span id="total-preco">0.00</span></span>
+                    </div>
+                    <div class="parcelamento-info" id="info-parcelas">
+                        Em até 6x de R$ 0,00 sem juros
+                    </div>
+
+                    <button class="btn-finalizar" onclick="finalizarPedido(event)">Finalizar Pedido</button>
+
+                    <div class="acoes-secundarias">
+                        <a href="index.html#boutique">← Continuar Comprando</a>
+                        <a href="#" onclick="limparCarrinho(event)">Esvaziar carrinho</a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 
+    <!-- SCRIPT DE GERENCIAMENTO DO CARRINHO -->
     <script>
+        let freteAtual = 0;
+        let descontoAplicado = 0;
+
         window.addEventListener('DOMContentLoaded', carregarCarrinho);
 
         function obterCarrinho() {
@@ -91,6 +581,34 @@
 
         function salvarCarrinho(carrinho) {
             localStorage.setItem('petlarCarrinho', JSON.stringify(carrinho));
+        }
+
+        // Função corrigida: Associa diretamente o ID do produto à sua imagem correspondente (01 a 08)
+        function adicionarAoCarrinho(id, nome, preco, elementoBotao) {
+            // Garante que o ID seja tratado corretamente (ex: 1 vira "01")
+            const numId = String(id).padStart(2, '0');
+            
+            // Define o nome exato da imagem baseado na sua regra de 01 a 08
+            let imagemSrc = (numId >= '01' && numId <= '08') ? `boutique_${numId}.jpg` : 'boutique_01.jpg';
+
+            let carrinho = obterCarrinho();
+            const index = carrinho.findIndex(p => String(p.id) === String(id));
+
+            if (index > -1) {
+                carrinho[index].quantidade += 1;
+                carrinho[index].imagem = imagemSrc; // Atualiza com a imagem correta
+            } else {
+                carrinho.push({
+                    id: id,
+                    nome: nome,
+                    preco: preco,
+                    quantidade: 1,
+                    imagem: imagemSrc
+                });
+            }
+
+            salvarCarrinho(carrinho);
+            alert('Produto adicionado ao carrinho com sucesso!');
         }
 
         function carregarCarrinho() {
@@ -109,23 +627,93 @@
             carrinhoConteudoDiv.style.display = 'block';
             listaDiv.innerHTML = '';
 
-            let total = 0;
+            let subtotalProdutos = 0;
             carrinho.forEach(produto => {
                 const subtotal = produto.preco * produto.quantidade;
-                total += subtotal;
+                subtotalProdutos += subtotal;
                 
+                // Força a imagem correta (boutique_01 até boutique_08) baseada no ID do produto
+                const numId = String(produto.id).padStart(2, '0');
+                let imagemSrc = (numId >= '01' && numId <= '08') ? `boutique_${numId}.jpg` : (produto.imagem || 'boutique_01.jpg');
+
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'item-carrinho';
-                itemDiv.innerHTML = '<div class="info-produto"><h3>' + produto.nome + '</h3><div class="preco-unitario">R$ ' + produto.preco.toFixed(2) + '</div><div class="controles"><button class="btn-remover" onclick="removerProduto(' + produto.id + ')">Remover</button></div></div><div><div style="text-align: right; margin-bottom: 10px;"><input type="number" class="quantidade-input" value="' + produto.quantidade + '" min="1" onchange="atualizarQuantidade(' + produto.id + ', this.value)"></div><div class="subtotal">R$ ' + subtotal.toFixed(2) + '</div></div>';
+                itemDiv.innerHTML = `
+                    <img src="${imagemSrc}" alt="${produto.nome}" class="produto-img">
+                    <div class="info-produto">
+                        <h4>${produto.nome}</h4>
+                        <div class="preco-unitario">R$ ${produto.preco.toFixed(2)} cada</div>
+                    </div>
+                    <div class="acoes-item">
+                        <div class="controles">
+                            <input type="number" class="quantidade-input" value="${produto.quantidade}" min="1" oninput="atualizarQuantidade('${produto.id}', this.value)">
+                            <button class="btn-remover" onclick="removerProduto('${produto.id}')">Remover</button>
+                        </div>
+                        <div class="subtotal">R$ ${subtotal.toFixed(2)}</div>
+                    </div>
+                `;
                 listaDiv.appendChild(itemDiv);
             });
 
-            document.getElementById('total-preco').textContent = total.toFixed(2);
+            document.getElementById('subtotal-produtos').textContent = subtotalProdutos.toFixed(2);
+            atualizarTotaisGerais(subtotalProdutos);
+        }
+
+        function calcularFrete() {
+            const cep = document.getElementById('cep-input').value;
+            if (cep.length < 8) {
+                alert('Por favor, informe um CEP válido.');
+                return;
+            }
+            document.getElementById('opcoes-entrega').style.display = 'flex';
+            alert('Opções de entrega calculadas para sua região!');
+        }
+
+        function atualizarFreteValor(valor) {
+            freteAtual = valor;
+            const subtotalProdutos = obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
+            
+            const freteDisplay = document.getElementById('valor-frete-display');
+            if(valor === 0) {
+                freteDisplay.textContent = 'Grátis';
+                freteDisplay.parentElement.className = 'linha-val frete-gratis';
+            } else {
+                freteDisplay.textContent = 'R$ ' + valor.toFixed(2);
+                freteDisplay.parentElement.className = 'linha-val';
+            }
+            atualizarTotaisGerais(subtotalProdutos);
+        }
+
+        function aplicarCupom() {
+            const cupom = document.getElementById('cupom-input').value.trim().toUpperCase();
+            const subtotalProdutos = obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
+            
+            if (cupom === 'PETLAR10') {
+                descontoAplicado = subtotalProdutos * 0.10;
+                document.getElementById('desconto-linha').style.display = 'flex';
+                document.getElementById('valor-desconto').textContent = descontoAplicado.toFixed(2);
+                alert('Cupom de 10% aplicado com sucesso!');
+            } else {
+                alert('Cupom inválido ou expirado.');
+                descontoAplicado = 0;
+                document.getElementById('desconto-linha').style.display = 'none';
+            }
+            atualizarTotaisGerais(subtotalProdutos);
+        }
+
+        function atualizarTotaisGerais(subtotalProdutos) {
+            let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
+            if (totalGeral < 0) totalGeral = 0;
+
+            document.getElementById('total-preco').textContent = totalGeral.toFixed(2);
+            
+            let valorParcela = totalGeral / 6;
+            document.getElementById('info-parcelas').textContent = `Em até 6x de R$ ${valorParcela.toFixed(2)} sem juros`;
         }
 
         function removerProduto(id) {
             let carrinho = obterCarrinho();
-            carrinho = carrinho.filter(p => p.id !== id);
+            carrinho = carrinho.filter(p => String(p.id) !== String(id));
             salvarCarrinho(carrinho);
             carregarCarrinho();
         }
@@ -133,10 +721,18 @@
         function atualizarQuantidade(id, novaQuantidade) {
             const quantidade = parseInt(novaQuantidade) || 1;
             let carrinho = obterCarrinho();
-            const produto = carrinho.find(p => p.id === id);
+            const produto = carrinho.find(p => String(p.id) === String(id));
             if (produto) {
                 produto.quantidade = Math.max(1, quantidade);
                 salvarCarrinho(carrinho);
+                carregarCarrinho();
+            }
+        }
+
+        function limparCarrinho(event) {
+            event.preventDefault();
+            if(confirm('Tem certeza de que deseja esvaziar seu carrinho?')) {
+                localStorage.removeItem('petlarCarrinho');
                 carregarCarrinho();
             }
         }
@@ -145,8 +741,8 @@
             event.preventDefault();
             const carrinho = obterCarrinho();
             if (carrinho.length > 0) {
-                alert('Obrigado! Entre em contato conosco pelo WhatsApp para finalizar seu pedido.');
-                window.location.href = 'https://wa.me/5511988772211?text=Ola!%20Gostaria%20de%20finalizar%20meu%20pedido';
+                alert('Redirecionando para o atendimento de finalização...');
+                window.location.href = 'https://wa.me/5511988772211?text=Olá!%20Gostaria%20de%20finalizar%20minha%20compra%20na%20PetLar';
             }
         }
     </script>
