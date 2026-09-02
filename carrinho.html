@@ -879,59 +879,87 @@
     }
 
     function finalizarPedido(event) {
-        event.preventDefault();
-        
-        const carrinho = obterCarrinho();
+    event.preventDefault();
+    
+    const carrinho = obterCarrinho();
 
-        if (carrinho.length === 0) {
-            alert('Seu carrinho está vazio!');
-            return;
-        }
-
-        const opcaoPagamento = document.querySelector('input[name="forma_pagamento"]:checked');
-        const formaPagamentoTexto = opcaoPagamento ? opcaoPagamento.nextElementSibling.querySelector('strong').innerText : 'Não informada';
-
-        const subtotalProdutos = carrinho.reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
-        let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
-        if (totalGeral < 0) totalGeral = 0;
-
-        const numeroPedido = Math.floor(100000 + Math.random() * 900000);
-
-        localStorage.removeItem('petlarCarrinho');
-
-        const carrinhoVazioDiv = document.getElementById('carrinho-vazio');
-        const carrinhoConteudoDiv = document.getElementById('carrinho-conteudo');
-
-        if (carrinhoConteudoDiv) {
-            carrinhoConteudoDiv.style.display = 'none';
-        }
-
-        if (carrinhoVazioDiv) {
-            carrinhoVazioDiv.innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <span style="font-size: 48px;">🎉</span>
-                    <h2 style="color: #2b2320; margin: 10px 0; font-family: 'Times New Roman', serif; font-size: 28px;">Pedido Realizado com Sucesso!</h2>
-                    <p style="color: #666; font-size: 15px; margin-bottom: 20px;">Obrigado por comprar na PetLar. Seu pedido <strong>#${numeroPedido}</strong> já está sendo processado.</p>
-                    
-                    <div style="background: #fdfbf7; padding: 15px; border-radius: 6px; border: 1px solid #e8e2d8; max-width: 400px; margin: 0 auto 25px; text-align: left; font-size: 14px; color: #333;">
-                        <p style="margin: 0 0 8px;"><strong>Status:</strong> Pagamento Confirmado</p>
-                        <p style="margin: 0 0 8px;"><strong>Forma de Pagamento:</strong> ${formaPagamentoTexto}</p>
-                        <p style="margin: 0; color: #c5a880; font-size: 16px;"><strong>Total do Pedido:</strong> R$ ${totalGeral.toFixed(2)}</p>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="window.location.reload()" style="background: #2b2320; color: #f4f0eb; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase;">
-                            Acompanhar Pedido
-                        </button>
-                        <a href="index.html" style="background: #c5a880; color: #2b2320; text-decoration: none; padding: 12px 20px; border-radius: 4px; font-weight: 600; font-size: 13px; text-transform: uppercase; display: inline-block;">
-                            Explorar a Boutique
-                        </a>
-                    </div>
-                </div>
-            `;
-            carrinhoVazioDiv.style.display = 'block';
-        }
+    if (carrinho.length === 0) {
+        alert('Seu carrinho está vazio!');
+        return;
     }
+
+    const opcaoPagamento = document.querySelector('input[name="forma_pagamento"]:checked');
+    const formaPagamentoTexto = opcaoPagamento ? opcaoPagamento.nextElementSibling.querySelector('strong').innerText : 'Não informada';
+
+    const subtotalProdutos = carrinho.reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
+    let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
+    if (totalGeral < 0) totalGeral = 0;
+
+    const numeroPedido = Math.floor(100000 + Math.random() * 900000);
+
+    localStorage.removeItem('petlarCarrinho');
+
+    const carrinhoVazioDiv = document.getElementById('carrinho-vazio');
+    const carrinhoConteudoDiv = document.getElementById('carrinho-conteudo');
+
+    if (carrinhoConteudoDiv) {
+        carrinhoConteudoDiv.style.display = 'none';
+    }
+
+    if (carrinhoVazioDiv) {
+        carrinhoVazioDiv.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <span style="font-size: 48px;">🎉</span>
+                <h2 style="color: #2b2320; margin: 10px 0; font-family: 'Times New Roman', serif; font-size: 28px;">Pedido Realizado com Sucesso!</h2>
+                <p style="color: #666; font-size: 15px; margin-bottom: 20px;">Obrigado por comprar na PetLar. Seu pedido <strong>#${numeroPedido}</strong> já está sendo processado.</p>
+                
+                <div style="background: #fdfbf7; padding: 15px; border-radius: 6px; border: 1px solid #e8e2d8; max-width: 400px; margin: 0 auto 20px; text-align: left; font-size: 14px; color: #333;">
+                    <p style="margin: 0 0 8px;"><strong>Status Atual:</strong> <span id="status-envio" style="color: #c5a880; font-weight: bold;">Pagamento Confirmado</span></p>
+                    <p style="margin: 0 0 8px;"><strong>Forma de Pagamento:</strong> ${formaPagamentoTexto}</p>
+                    <p style="margin: 0; color: #2b2320; font-size: 16px;"><strong>Total do Pedido:</strong> R$ ${totalGeral.toFixed(2)}</p>
+                </div>
+
+                <div id="painel-rastreio" style="display: none; background: #2b2320; color: #f4f0eb; padding: 15px; border-radius: 6px; max-width: 400px; margin: 0 auto 20px; font-size: 14px;">
+                    <p style="margin: 0 0 5px; font-size: 11px; letter-spacing: 1px; color: #c5a880; text-transform: uppercase;">Atualização do Rastreameno</p>
+                    <strong id="texto-status" style="font-size: 16px; display: block; margin-top: 5px;">📦 Pedido em separação</strong>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="acompanharPedido()" style="background: #2b2320; color: #f4f0eb; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase;">
+                        Acompanhar Pedido
+                    </button>
+                    <a href="index.html" style="background: #c5a880; color: #2b2320; text-decoration: none; padding: 12px 20px; border-radius: 4px; font-weight: 600; font-size: 13px; text-transform: uppercase; display: inline-block;">
+                        Explorar a Boutique
+                    </a>
+                </div>
+            </div>
+        `;
+        carrinhoVazioDiv.style.display = 'block';
+    }
+}
+
+let etapaStatus = 0;
+function acompanharPedido() {
+    const listaStatus = [
+        "📦 Pedido em separação no estoque",
+        "🏷️ Pedido postado nos Correios/Transportadora",
+        "🚚 Pedido a caminho do centro de distribuição",
+        "🛵 Pedido em rota de entrega para seu endereço",
+        "🏬 Pedido pronto para retirada / Entregue"
+    ];
+
+    const painelRastreio = document.getElementById('painel-rastreio');
+    const textoStatus = document.getElementById('texto-status');
+    const statusEnvio = document.getElementById('status-envio');
+
+    painelRastreio.style.display = 'block';
+    
+    const statusAtual = listaStatus[etapaStatus];
+    textoStatus.textContent = statusAtual;
+    statusEnvio.textContent = statusAtual.replace(/^[^\s]+\s/, ''); // Atualiza o resumo acima
+
+    etapaStatus = (etapaStatus + 1) % listaStatus.length;
+}
 </script>
 </body>
 </html>
