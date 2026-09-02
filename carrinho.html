@@ -499,28 +499,174 @@
                         </div>
                     </div>
 
-                    <div class="card-secao">
-                        <h3>💳 Formas de Pagamento Aceitas</h3>
-                        <p style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">Selecione sua forma preferida na próxima etapa:</p>
-                        <div class="grid-pagamento">
-                            <div class="card-pgto">
-                                <strong>⚡ PIX</strong>
-                                <span>5% de desconto automático</span>
-                            </div>
-                            <div class="card-pgto">
-                                <strong>💳 Cartão de Crédito</strong>
-                                <span>Até 6x sem juros</span>
-                            </div>
-                            <div class="card-pgto">
-                                <strong>📄 Boleto Bancário</strong>
-                                <span>Vencimento em 1 dia útil</span>
-                            </div>
-                            <div class="card-pgto">
-                                <strong>📱 Carteiras Digitais</strong>
-                                <span>Apple Pay / Google Pay</span>
-                            </div>
-                        </div>
+
+        <!-- ESTILOS (CSS) -->
+    <style>
+        .grid-pagamento {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .card-pgto-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #fff;
+        }
+
+        /* Destaca a opção selecionada */
+        .card-pgto-option:has(input:checked) {
+            border-color: #c5a880;
+            background-color: #fdfbf7;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .card-pgto-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-pgto-content strong {
+            font-size: 0.9rem;
+            color: #2b2320;
+        }
+
+        .card-pgto-content span {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .painel-pgto input, .painel-pgto select {
+            box-sizing: border-box;
+        }
+    </style>
+
+    <!-- ESTRUTURA (HTML) -->
+    <div class="card-secao">
+        <h3>💳 Formas de Pagamento Aceitas</h3>
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 12px;">Selecione a opção desejada para finalizar:</p>
+        
+        <!-- Opções de Pagamento -->
+        <div class="grid-pagamento">
+            <label class="card-pgto-option">
+                <input type="radio" name="forma_pagamento" value="pix" onchange="alternarPagamento('pix')" checked>
+                <div class="card-pgto-content">
+                    <strong>⚡ PIX</strong>
+                    <span>5% de desconto automático</span>
+                </div>
+            </label>
+
+            <label class="card-pgto-option">
+                <input type="radio" name="forma_pagamento" value="cartao" onchange="alternarPagamento('cartao')">
+                <div class="card-pgto-content">
+                    <strong>💳 Cartão de Crédito</strong>
+                    <span>Até 6x sem juros</span>
+                </div>
+            </label>
+
+            <label class="card-pgto-option">
+                <input type="radio" name="forma_pagamento" value="boleto" onchange="alternarPagamento('boleto')">
+                <div class="card-pgto-content">
+                    <strong>📄 Boleto Bancário</strong>
+                    <span>Vencimento em 1 dia útil</span>
+                </div>
+            </label>
+
+            <label class="card-pgto-option">
+                <input type="radio" name="forma_pagamento" value="carteiras" onchange="alternarPagamento('carteiras')">
+                <div class="card-pgto-content">
+                    <strong>📱 Carteiras Digitais</strong>
+                    <span>Apple Pay / Google Pay</span>
+                </div>
+            </label>
+        </div>
+
+        <!-- Painéis Dinâmicos -->
+        <div id="paineis-pagamento" style="margin-top: 20px; padding: 15px; border: 1px solid #e0e0e0; border-radius: 6px; background: #fafafa;">
+            
+    <!-- Painel PIX Atualizado -->
+    <div id="painel-pix" class="painel-pgto" style="display: block; text-align: center;">
+        <p style="font-size: 0.9rem; margin-bottom: 10px; color: #333;">Escaneie o QR Code ou copie a chave abaixo:</p>
+        
+        <!-- QR Code Gerado com a Nova Chave -->
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=00020126330014BR.GOV.BCB.PIX0111488210228545204000053039865802BR5920Sophia%20Marques%20Zuini6009SAO%20PAULO62140510cPls3Yy0qa6304DF81" alt="QR Code PIX" style="margin-bottom: 10px; border: 1px solid #ddd; padding: 5px; background: #fff; border-radius: 4px;">
+        
+        <!-- Campo Copia e Cola -->
+        <div style="display: flex; gap: 5px; max-width: 340px; margin: 0 auto;">
+            <input type="text" value="00020126330014BR.GOV.BCB.PIX0111488210228545204000053039865802BR5920Sophia Marques Zuini6009SAO PAULO62140510cPls3Yy0qa6304DF81" id="chavePix" readonly style="width: 100%; font-size: 0.8rem; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+            <button type="button" onclick="copiarPix()" style="padding: 8px 12px; background: #2b2320; color: #fff; border: none; cursor: pointer; border-radius: 4px; font-weight: bold;">Copiar</button>
+        </div>
+    </div>
+
+            <!-- Painel Cartão -->
+            <div id="painel-cartao" class="painel-pgto" style="display: none;">
+                <form style="display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto;">
+                    <input type="text" placeholder="Número do Cartão" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    <input type="text" placeholder="Nome impresso no cartão" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" placeholder="Validade (MM/AA)" style="width: 50%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                        <input type="text" placeholder="CVV" style="width: 50%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
                     </div>
+
+                    <select id="select-parcelas" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+                        <option value="1">1x sem juros</option>
+                        <option value="2">2x sem juros</option>
+                        <option value="3">3x sem juros</option>
+                        <option value="4">4x sem juros</option>
+                        <option value="5">5x sem juros</option>
+                        <option value="6">6x sem juros</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Painel Boleto -->
+            <div id="painel-boleto" class="painel-pgto" style="display: none; text-align: center;">
+                <p style="font-size: 0.9rem; color: #555;">O boleto será gerado e exibido na tela após a confirmação do pedido.</p>
+                <span style="font-size: 0.8rem; color: #888;">Prazo de compensação: até 48 horas úteis.</span>
+            </div>
+
+            <!-- Painel Carteiras -->
+            <div id="painel-carteiras" class="painel-pgto" style="display: none; text-align: center;">
+                <p style="font-size: 0.9rem; margin-bottom: 12px; color: #333;">Escolha sua carteira para autenticar a compra:</p>
+                <div style="display: flex; justify-content: center; gap: 10px;">
+                    <button type="button" style="padding: 10px 20px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;"> Apple Pay</button>
+                    <button type="button" style="padding: 10px 20px; background: #4285F4; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">G Pay</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- LÓGICA (JAVASCRIPT) -->
+    <script>
+        function alternarPagamento(tipo) {
+            // Oculta todos os painéis
+            const paineis = document.querySelectorAll('.painel-pgto');
+            paineis.forEach(painel => painel.style.display = 'none');
+
+            // Exibe apenas o painel selecionado
+            const painelAtivo = document.getElementById(`painel-${tipo}`);
+            if (painelAtivo) {
+                painelAtivo.style.display = 'block';
+            }
+        }
+
+        function copiarPix() {
+            const inputPix = document.getElementById("chavePix");
+            inputPix.select();
+            inputPix.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(inputPix.value);
+            alert("Código PIX copiado com sucesso!");
+        }
+    </script>
 
                 </div>
 
@@ -569,182 +715,223 @@
 
     <!-- SCRIPT DE GERENCIAMENTO DO CARRINHO -->
     <script>
-        let freteAtual = 0;
-        let descontoAplicado = 0;
+    let freteAtual = 0;
+    let descontoAplicado = 0;
 
-        window.addEventListener('DOMContentLoaded', carregarCarrinho);
+    window.addEventListener('DOMContentLoaded', carregarCarrinho);
 
-        function obterCarrinho() {
-            const carrinho = localStorage.getItem('petlarCarrinho');
-            return carrinho ? JSON.parse(carrinho) : [];
-        }
+    function obterCarrinho() {
+        const carrinho = localStorage.getItem('petlarCarrinho');
+        return carrinho ? JSON.parse(carrinho) : [];
+    }
 
-        function salvarCarrinho(carrinho) {
-            localStorage.setItem('petlarCarrinho', JSON.stringify(carrinho));
-        }
+    function salvarCarrinho(carrinho) {
+        localStorage.setItem('petlarCarrinho', JSON.stringify(carrinho));
+    }
 
-        // Função corrigida: Associa diretamente o ID do produto à sua imagem correspondente (01 a 08)
-        function adicionarAoCarrinho(id, nome, preco, elementoBotao) {
-            // Garante que o ID seja tratado corretamente (ex: 1 vira "01")
-            const numId = String(id).padStart(2, '0');
-            
-            // Define o nome exato da imagem baseado na sua regra de 01 a 08
-            let imagemSrc = (numId >= '01' && numId <= '08') ? `boutique_${numId}.jpg` : 'boutique_01.jpg';
+    function adicionarAoCarrinho(id, nome, preco, elementoBotao) {
+        const numId = String(id).padStart(2, '0');
+        let imagemSrc = (numId >= '01' && numId <= '08') ? `boutique_${numId}.jpg` : 'boutique_01.jpg';
 
-            let carrinho = obterCarrinho();
-            const index = carrinho.findIndex(p => String(p.id) === String(id));
+        let carrinho = obterCarrinho();
+        const index = carrinho.findIndex(p => String(p.id) === String(id));
 
-            if (index > -1) {
-                carrinho[index].quantidade += 1;
-                carrinho[index].imagem = imagemSrc; // Atualiza com a imagem correta
-            } else {
-                carrinho.push({
-                    id: id,
-                    nome: nome,
-                    preco: preco,
-                    quantidade: 1,
-                    imagem: imagemSrc
-                });
-            }
-
-            salvarCarrinho(carrinho);
-            alert('Produto adicionado ao carrinho com sucesso!');
-        }
-
-        function carregarCarrinho() {
-            const carrinho = obterCarrinho();
-            const listaDiv = document.getElementById('lista-produtos');
-            const carrinhoVazioDiv = document.getElementById('carrinho-vazio');
-            const carrinhoConteudoDiv = document.getElementById('carrinho-conteudo');
-
-            if (carrinho.length === 0) {
-                carrinhoVazioDiv.style.display = 'block';
-                carrinhoConteudoDiv.style.display = 'none';
-                return;
-            }
-
-            carrinhoVazioDiv.style.display = 'none';
-            carrinhoConteudoDiv.style.display = 'block';
-            listaDiv.innerHTML = '';
-
-            let subtotalProdutos = 0;
-            carrinho.forEach(produto => {
-                const subtotal = produto.preco * produto.quantidade;
-                subtotalProdutos += subtotal;
-                
-                // Força a imagem correta (boutique_01 até boutique_08) baseada no ID do produto
-                const numId = String(produto.id).padStart(2, '0');
-                let imagemSrc = (numId >= '01' && numId <= '08') ? `boutique_${numId}.jpg` : (produto.imagem || 'boutique_01.jpg');
-
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'item-carrinho';
-                itemDiv.innerHTML = `
-                    <img src="${imagemSrc}" alt="${produto.nome}" class="produto-img">
-                    <div class="info-produto">
-                        <h4>${produto.nome}</h4>
-                        <div class="preco-unitario">R$ ${produto.preco.toFixed(2)} cada</div>
-                    </div>
-                    <div class="acoes-item">
-                        <div class="controles">
-                            <input type="number" class="quantidade-input" value="${produto.quantidade}" min="1" oninput="atualizarQuantidade('${produto.id}', this.value)">
-                            <button class="btn-remover" onclick="removerProduto('${produto.id}')">Remover</button>
-                        </div>
-                        <div class="subtotal">R$ ${subtotal.toFixed(2)}</div>
-                    </div>
-                `;
-                listaDiv.appendChild(itemDiv);
+        if (index > -1) {
+            carrinho[index].quantidade += 1;
+            carrinho[index].imagem = imagemSrc; 
+        } else {
+            carrinho.push({
+                id: id,
+                nome: nome,
+                preco: preco,
+                quantidade: 1,
+                imagem: imagemSrc
             });
-
-            document.getElementById('subtotal-produtos').textContent = subtotalProdutos.toFixed(2);
-            atualizarTotaisGerais(subtotalProdutos);
         }
 
-        function calcularFrete() {
-            const cep = document.getElementById('cep-input').value;
-            if (cep.length < 8) {
-                alert('Por favor, informe um CEP válido.');
-                return;
-            }
-            document.getElementById('opcoes-entrega').style.display = 'flex';
-            alert('Opções de entrega calculadas para sua região!');
+        salvarCarrinho(carrinho);
+        alert('Produto adicionado ao carrinho com sucesso!');
+    }
+
+    function carregarCarrinho() {
+        const carrinho = obterCarrinho();
+        const listaDiv = document.getElementById('lista-produtos');
+        const carrinhoVazioDiv = document.getElementById('carrinho-vazio');
+        const carrinhoConteudoDiv = document.getElementById('carrinho-conteudo');
+
+        if (carrinho.length === 0) {
+            carrinhoVazioDiv.style.display = 'block';
+            carrinhoConteudoDiv.style.display = 'none';
+            return;
         }
 
-        function atualizarFreteValor(valor) {
-            freteAtual = valor;
-            const subtotalProdutos = obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
+        carrinhoVazioDiv.style.display = 'none';
+        carrinhoConteudoDiv.style.display = 'block';
+        listaDiv.innerHTML = '';
+
+        let subtotalProdutos = 0;
+        carrinho.forEach(produto => {
+            const subtotal = produto.preco * produto.quantidade;
+            subtotalProdutos += subtotal;
             
-            const freteDisplay = document.getElementById('valor-frete-display');
-            if(valor === 0) {
-                freteDisplay.textContent = 'Grátis';
-                freteDisplay.parentElement.className = 'linha-val frete-gratis';
-            } else {
-                freteDisplay.textContent = 'R$ ' + valor.toFixed(2);
-                freteDisplay.parentElement.className = 'linha-val';
-            }
-            atualizarTotaisGerais(subtotalProdutos);
+            const numId = String(produto.id).padStart(2, '0');
+            let imagemSrc = (numId >= '01' && numId <= '08') ? `boutique_${numId}.jpg` : (produto.imagem || 'boutique_01.jpg');
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item-carrinho';
+            itemDiv.innerHTML = `
+                <img src="${imagemSrc}" alt="${produto.nome}" class="produto-img">
+                <div class="info-produto">
+                    <h4>${produto.nome}</h4>
+                    <div class="preco-unitario">R$ ${produto.preco.toFixed(2)} cada</div>
+                </div>
+                <div class="acoes-item">
+                    <div class="controles">
+                        <input type="number" class="quantidade-input" value="${produto.quantidade}" min="1" oninput="atualizarQuantidade('${produto.id}', this.value)">
+                        <button class="btn-remover" onclick="removerProduto('${produto.id}')">Remover</button>
+                    </div>
+                    <div class="subtotal">R$ ${subtotal.toFixed(2)}</div>
+                </div>
+            `;
+            listaDiv.appendChild(itemDiv);
+        });
+
+        document.getElementById('subtotal-produtos').textContent = subtotalProdutos.toFixed(2);
+        atualizarTotaisGerais(subtotalProdutos);
+    }
+
+    function calcularFrete() {
+        const cep = document.getElementById('cep-input').value;
+        if (cep.length < 8) {
+            alert('Por favor, informe um CEP válido.');
+            return;
         }
+        document.getElementById('opcoes-entrega').style.display = 'flex';
+        alert('Opções de entrega calculadas para sua região!');
+    }
 
-        function aplicarCupom() {
-            const cupom = document.getElementById('cupom-input').value.trim().toUpperCase();
-            const subtotalProdutos = obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
-            
-            if (cupom === 'PETLAR10') {
-                descontoAplicado = subtotalProdutos * 0.10;
-                document.getElementById('desconto-linha').style.display = 'flex';
-                document.getElementById('valor-desconto').textContent = descontoAplicado.toFixed(2);
-                alert('Cupom de 10% aplicado com sucesso!');
-            } else {
-                alert('Cupom inválido ou expirado.');
-                descontoAplicado = 0;
-                document.getElementById('desconto-linha').style.display = 'none';
-            }
-            atualizarTotaisGerais(subtotalProdutos);
+    function atualizarFreteValor(valor) {
+        freteAtual = valor;
+        const subtotalProdutos = obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
+        
+        const freteDisplay = document.getElementById('valor-frete-display');
+        if(valor === 0) {
+            freteDisplay.textContent = 'Grátis';
+            freteDisplay.parentElement.className = 'linha-val frete-gratis';
+        } else {
+            freteDisplay.textContent = 'R$ ' + valor.toFixed(2);
+            freteDisplay.parentElement.className = 'linha-val';
         }
+        atualizarTotaisGerais(subtotalProdutos);
+    }
 
-        function atualizarTotaisGerais(subtotalProdutos) {
-            let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
-            if (totalGeral < 0) totalGeral = 0;
-
-            document.getElementById('total-preco').textContent = totalGeral.toFixed(2);
-            
-            let valorParcela = totalGeral / 6;
-            document.getElementById('info-parcelas').textContent = `Em até 6x de R$ ${valorParcela.toFixed(2)} sem juros`;
+    function aplicarCupom() {
+        const cupom = document.getElementById('cupom-input').value.trim().toUpperCase();
+        const subtotalProdutos = obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
+        
+        if (cupom === 'PETLAR10') {
+            descontoAplicado = subtotalProdutos * 0.10;
+            document.getElementById('desconto-linha').style.display = 'flex';
+            document.getElementById('valor-desconto').textContent = descontoAplicado.toFixed(2);
+            alert('Cupom de 10% aplicado com sucesso!');
+        } else {
+            alert('Cupom inválido ou expirado.');
+            descontoAplicado = 0;
+            document.getElementById('desconto-linha').style.display = 'none';
         }
+        atualizarTotaisGerais(subtotalProdutos);
+    }
 
-        function removerProduto(id) {
-            let carrinho = obterCarrinho();
-            carrinho = carrinho.filter(p => String(p.id) !== String(id));
+    function atualizarTotaisGerais(subtotalProdutos) {
+        let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
+        if (totalGeral < 0) totalGeral = 0;
+
+        document.getElementById('total-preco').textContent = totalGeral.toFixed(2);
+        
+        let valorParcela = totalGeral / 6;
+        document.getElementById('info-parcelas').textContent = `Em até 6x de R$ ${valorParcela.toFixed(2)} sem juros`;
+    }
+
+    function removerProduto(id) {
+        let carrinho = obterCarrinho();
+        carrinho = carrinho.filter(p => String(p.id) !== String(id));
+        salvarCarrinho(carrinho);
+        carregarCarrinho();
+    }
+
+    function atualizarQuantidade(id, novaQuantidade) {
+        const quantidade = parseInt(novaQuantidade) || 1;
+        let carrinho = obterCarrinho();
+        const produto = carrinho.find(p => String(p.id) === String(id));
+        if (produto) {
+            produto.quantidade = Math.max(1, quantidade);
             salvarCarrinho(carrinho);
             carregarCarrinho();
         }
+    }
 
-        function atualizarQuantidade(id, novaQuantidade) {
-            const quantidade = parseInt(novaQuantidade) || 1;
-            let carrinho = obterCarrinho();
-            const produto = carrinho.find(p => String(p.id) === String(id));
-            if (produto) {
-                produto.quantidade = Math.max(1, quantidade);
-                salvarCarrinho(carrinho);
-                carregarCarrinho();
-            }
+    function limparCarrinho(event) {
+        event.preventDefault();
+        if(confirm('Tem certeza de que deseja esvaziar seu carrinho?')) {
+            localStorage.removeItem('petlarCarrinho');
+            carregarCarrinho();
+        }
+    }
+
+    function finalizarPedido(event) {
+        event.preventDefault();
+        
+        const carrinho = obterCarrinho();
+
+        if (carrinho.length === 0) {
+            alert('Seu carrinho está vazio!');
+            return;
         }
 
-        function limparCarrinho(event) {
-            event.preventDefault();
-            if(confirm('Tem certeza de que deseja esvaziar seu carrinho?')) {
-                localStorage.removeItem('petlarCarrinho');
-                carregarCarrinho();
-            }
+        const opcaoPagamento = document.querySelector('input[name="forma_pagamento"]:checked');
+        const formaPagamentoTexto = opcaoPagamento ? opcaoPagamento.nextElementSibling.querySelector('strong').innerText : 'Não informada';
+
+        const subtotalProdutos = carrinho.reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
+        let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
+        if (totalGeral < 0) totalGeral = 0;
+
+        const numeroPedido = Math.floor(100000 + Math.random() * 900000);
+
+        localStorage.removeItem('petlarCarrinho');
+
+        const carrinhoVazioDiv = document.getElementById('carrinho-vazio');
+        const carrinhoConteudoDiv = document.getElementById('carrinho-conteudo');
+
+        if (carrinhoConteudoDiv) {
+            carrinhoConteudoDiv.style.display = 'none';
         }
 
-        function finalizarPedido(event) {
-            event.preventDefault();
-            const carrinho = obterCarrinho();
-            if (carrinho.length > 0) {
-                alert('Redirecionando para o atendimento de finalização...');
-                window.location.href = 'https://wa.me/5511988772211?text=Olá!%20Gostaria%20de%20finalizar%20minha%20compra%20na%20PetLar';
-            }
+        if (carrinhoVazioDiv) {
+            carrinhoVazioDiv.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <span style="font-size: 48px;">🎉</span>
+                    <h2 style="color: #2b2320; margin: 10px 0; font-family: 'Times New Roman', serif; font-size: 28px;">Pedido Realizado com Sucesso!</h2>
+                    <p style="color: #666; font-size: 15px; margin-bottom: 20px;">Obrigado por comprar na PetLar. Seu pedido <strong>#${numeroPedido}</strong> já está sendo processado.</p>
+                    
+                    <div style="background: #fdfbf7; padding: 15px; border-radius: 6px; border: 1px solid #e8e2d8; max-width: 400px; margin: 0 auto 25px; text-align: left; font-size: 14px; color: #333;">
+                        <p style="margin: 0 0 8px;"><strong>Status:</strong> Pagamento Confirmado</p>
+                        <p style="margin: 0 0 8px;"><strong>Forma de Pagamento:</strong> ${formaPagamentoTexto}</p>
+                        <p style="margin: 0; color: #c5a880; font-size: 16px;"><strong>Total do Pedido:</strong> R$ ${totalGeral.toFixed(2)}</p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="window.location.reload()" style="background: #2b2320; color: #f4f0eb; border: none; padding: 12px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase;">
+                            Acompanhar Pedido
+                        </button>
+                        <a href="index.html" style="background: #c5a880; color: #2b2320; text-decoration: none; padding: 12px 20px; border-radius: 4px; font-weight: 600; font-size: 13px; text-transform: uppercase; display: inline-block;">
+                            Explorar a Boutique
+                        </a>
+                    </div>
+                </div>
+            `;
+            carrinhoVazioDiv.style.display = 'block';
         }
-    </script>
+    }
+</script>
 </body>
 </html>
