@@ -6,6 +6,11 @@
     <title>PetLar Sanctuary</title>
     <link rel="icon" type="image/x-icon" href="Logo.png">
     <link rel="stylesheet" href="style.css">
+    <script src="auth.js"></script>
+    <script>
+        PetLarAuth.exigirLogin();
+        document.addEventListener('DOMContentLoaded', () => PetLarAuth.mostrarUsuario(document.querySelector('.menu-action')));
+    </script>
 </head>
 <body>
 

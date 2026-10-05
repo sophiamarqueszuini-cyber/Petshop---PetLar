@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar | PetLar Sanctuary</title>
+    <link rel="icon" type="image/x-icon" href="Logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="auth.js"></script>
+    <style>
+        :root {
+            --superficie: #fcfbf9;
+            --fundo: #f4f3f0;
+            --texto: #1a1a1a;
+            --texto-secundario: #666666;
+            --marrom: #885533;
+            --marrom-hover: #6d3f27;
+            --dourado: #c5a880;
+            --borda: #e6e2dc;
+            --erro: #d9534f;
+            --sucesso: #2e7d32;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Zilla Slab', Georgia, serif;
+            background: var(--fundo);
+            color: var(--texto);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+
+        .card-login {
+            width: 100%;
+            max-width: 440px;
+            background: var(--superficie);
+            border: 1px solid var(--borda);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 40px 32px;
+            text-align: center;
+        }
+
+        .logo { width: 200px; height: auto; }
+
+        .tag {
+            display: block;
+            margin-top: 10px;
+            color: var(--dourado);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 { margin-top: 28px; font-size: 1.7rem; font-weight: 600; }
+
+        .subtitulo {
+            margin: 6px 0 24px;
+            color: var(--texto-secundario);
+            font-style: italic;
+        }
+
+        .tela { display: none; }
+        .tela.ativa { display: block; }
+
+        form { text-align: left; }
+
+        .campo { margin-bottom: 14px; }
+
+        .campo label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .campo .opcional { color: var(--texto-secundario); font-weight: 400; }
+
+        .campo-senha { position: relative; }
+
+        .campo input {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--texto);
+            transition: border-color 0.2s;
+        }
+
+        .campo-senha input { padding-right: 70px; }
+
+        .campo input:focus { outline: none; border-color: var(--marrom); }
+        .campo.com-erro input { border-color: var(--erro); }
+
+        .mostrar-senha {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--marrom);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .ajuda, .erro { display: block; margin-top: 4px; font-size: 0.8rem; }
+        .ajuda { color: var(--texto-secundario); }
+        .erro { color: var(--erro); }
+        .erro:empty { display: none; }
+
+        .btn-texto {
+            background: none;
+            border: none;
+            color: var(--marrom);
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .btn-texto:hover { color: var(--marrom-hover); }
+
+        .linha-direita { text-align: right; }
+
+        .btn-principal {
+            width: 100%;
+            margin-top: 12px;
+            padding: 14px;
+            background: var(--marrom);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-principal:hover { background: var(--marrom-hover); }
+        .btn-principal:disabled { opacity: 0.6; cursor: wait; }
+
+        .rodape-form {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--texto-secundario);
+        }
+
+        .mensagem {
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 8px;
+            background: #eef6ee;
+            color: var(--sucesso);
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .descricao { margin-bottom: 20px; color: var(--texto-secundario); text-align: left; }
+
+        @media (max-width: 480px) {
+            .card-login { padding: 32px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<main class="card-login">
+    <img src="Logo-semfundo.png" alt="PetLar Sanctuary" class="logo">
+    <span class="tag">Santuário &amp; Curadoria</span>
+
+    <!-- LOGIN -->
+    <section id="tela-login" class="tela ativa">
+        <h1>Bem-vindo(a) ao seu refúgio</h1>
+        <p class="subtitulo">“Onde o afeto encontra o seu lugar”</p>
+
+        <form id="form-login" novalidate>
+            <div class="campo">
+                <label for="login-email">E-mail</label>
+                <input type="email" id="login-email" autocomplete="email">
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="login-senha">Senha</label>
+                <div class="campo-senha">
+                    <input type="password" id="login-senha" autocomplete="current-password">
+                    <button type="button" class="mostrar-senha">Mostrar</button>
+                </div>
+                <span class="erro"></span>
+            </div>
+            <div class="linha-direita">
+                <button type="button" class="btn-texto" data-ir="tela-recuperar">Esqueci minha senha</button>
+            </div>
+            <button type="submit" class="btn-principal">Entrar</button>
+        </form>
+
+        <p class="rodape-form">
+            Não tem conta?
+            <button type="button" class="btn-texto" data-ir="tela-cadastro">Cadastre-se</button>
+        </p>
+    </section>
+
+    <!-- CADASTRO -->
+    <section id="tela-cadastro" class="tela">
+        <h1>Criar conta</h1>
+        <p class="subtitulo">Preencha seus dados para começar</p>
+
+        <form id="form-cadastro" novalidate>
+            <div class="campo">
+                <label for="cad-nome">Nome completo</label>
+                <input type="text" id="cad-nome" autocomplete="name">
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="cad-email">E-mail</label>
+                <input type="email" id="cad-email" autocomplete="email">
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="cad-telefone">Telefone <span class="opcional">(opcional)</span></label>
+                <input type="tel" id="cad-telefone" autocomplete="tel" placeholder="(11) 99999-9999">
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="cad-cpf">CPF <span class="opcional">(opcional)</span></label>
+                <input type="text" id="cad-cpf" inputmode="numeric" placeholder="000.000.000-00">
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="cad-senha">Senha</label>
+                <div class="campo-senha">
+                    <input type="password" id="cad-senha" autocomplete="new-password">
+                    <button type="button" class="mostrar-senha">Mostrar</button>
+                </div>
+                <span class="ajuda">Mínimo de 6 caracteres</span>
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="cad-confirmar">Confirmar senha</label>
+                <div class="campo-senha">
+                    <input type="password" id="cad-confirmar" autocomplete="new-password">
+                    <button type="button" class="mostrar-senha">Mostrar</button>
+                </div>
+                <span class="erro"></span>
+            </div>
+            <button type="submit" class="btn-principal">Cadastrar</button>
+        </form>
+
+        <p class="rodape-form">
+            Já tem conta?
+            <button type="button" class="btn-texto" data-ir="tela-login">Entrar</button>
+        </p>
+    </section>
+
+    <!-- RECUPERAR SENHA -->
+    <section id="tela-recuperar" class="tela">
+        <h1>Recuperar senha</h1>
+        <p class="subtitulo">Acesso</p>
+
+        <form id="form-recuperar" novalidate>
+            <p class="descricao">Informe o e-mail da sua conta e enviaremos as instruções para criar uma nova senha.</p>
+            <div class="campo">
+                <label for="rec-email">E-mail</label>
+                <input type="email" id="rec-email" autocomplete="email">
+                <span class="erro"></span>
+            </div>
+            <button type="submit" class="btn-principal">Enviar instruções</button>
+            <div id="rec-mensagem" class="mensagem" hidden></div>
+        </form>
+
+        <p class="rodape-form">
+            <button type="button" class="btn-texto" data-ir="tela-login">Voltar para o login</button>
+        </p>
+    </section>
+</main>
+
+<script>
+    const auth = window.PetLarAuth;
+    const parametros = new URLSearchParams(window.location.search);
+    // Só aceita voltar para páginas do próprio site.
+    const voltar = /^[\w-]+\.html(#[\w-]*)?$/.test(parametros.get('voltar') || '') ? parametros.get('voltar') : 'index.html';
+
+    // Quem já está logado vai direto para o site, como no app.
+    if (auth.usuarioLogado()) window.location.replace(voltar);
+
+    auth.carregarContasPadrao();
+
+    function erro(input, mensagem) {
+        const campo = input.closest('.campo');
+        campo.classList.toggle('com-erro', !!mensagem);
+        campo.querySelector('.erro').textContent = mensagem || '';
+        return !!mensagem;
+    }
+
+    function limparErros(form) {
+        form.querySelectorAll('.campo').forEach(c => {
+            c.classList.remove('com-erro');
+            c.querySelector('.erro').textContent = '';
+        });
+    }
+
+    function erroEmail(email) {
+        if (!email) return 'Informe o e-mail';
+        if (!auth.EMAIL_VALIDO.test(email)) return 'E-mail inválido';
+        return null;
+    }
+
+    function irPara(idTela) {
+        document.querySelectorAll('.tela').forEach(t => t.classList.toggle('ativa', t.id === idTela));
+        document.querySelectorAll('form').forEach(limparErros);
+        document.getElementById('rec-mensagem').hidden = true;
+        if (idTela === 'tela-recuperar') {
+            document.getElementById('rec-email').value = document.getElementById('login-email').value.trim();
+        }
+        const primeiro = document.querySelector('#' + idTela + ' input');
+        if (primeiro) primeiro.focus();
+    }
+
+    document.querySelectorAll('[data-ir]').forEach(botao => {
+        botao.addEventListener('click', () => irPara(botao.dataset.ir));
+    });
+
+    document.querySelectorAll('.mostrar-senha').forEach(botao => {
+        botao.addEventListener('click', () => {
+            const input = botao.previousElementSibling;
+            const mostrar = input.type === 'password';
+            input.type = mostrar ? 'text' : 'password';
+            botao.textContent = mostrar ? 'Ocultar' : 'Mostrar';
+        });
+    });
+
+    // LOGIN
+    document.getElementById('form-login').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inputEmail = document.getElementById('login-email');
+        const inputSenha = document.getElementById('login-senha');
+        const email = inputEmail.value.trim();
+        const senha = inputSenha.value;
+
+        const temErro = [
+            erro(inputEmail, erroEmail(email)),
+            erro(inputSenha, senha ? null : 'Informe a senha')
+        ].some(Boolean);
+        if (temErro) return;
+
+        const botao = e.target.querySelector('.btn-principal');
+        botao.disabled = true;
+        await auth.carregarContasPadrao();
+        const usuario = await auth.entrar(email, senha);
+        botao.disabled = false;
+
+        if (!usuario) {
+            erro(inputSenha, 'E-mail ou senha incorretos');
+            return;
+        }
+        window.location.replace(voltar);
+    });
+
+    // CADASTRO
+    document.getElementById('form-cadastro').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inputNome = document.getElementById('cad-nome');
+        const inputEmail = document.getElementById('cad-email');
+        const inputTelefone = document.getElementById('cad-telefone');
+        const inputCpf = document.getElementById('cad-cpf');
+        const inputSenha = document.getElementById('cad-senha');
+        const inputConfirmar = document.getElementById('cad-confirmar');
+
+        const nome = inputNome.value.trim();
+        const email = inputEmail.value.trim();
+        const telefone = inputTelefone.value.replace(/\D/g, '');
+        const cpf = inputCpf.value.replace(/\D/g, '');
+        const senha = inputSenha.value;
+
+        const temErro = [
+            erro(inputNome, nome.length < 3 ? 'Informe o nome completo' : null),
+            erro(inputEmail, erroEmail(email) || (auth.emailCadastrado(email) ? 'Já existe uma conta com este e-mail' : null)),
+            erro(inputTelefone, telefone && (telefone.length < 10 || telefone.length > 11) ? 'Telefone deve ter 10 ou 11 dígitos' : null),
+            erro(inputCpf, cpf && cpf.length !== 11 ? 'CPF deve ter 11 dígitos' : null),
+            erro(inputSenha, !senha ? 'Informe a senha' : senha.length < 6 ? 'A senha deve ter pelo menos 6 caracteres' : null),
+            erro(inputConfirmar, inputConfirmar.value !== senha ? 'As senhas não coincidem' : null)
+        ].some(Boolean);
+        if (temErro) return;
+
+        const botao = e.target.querySelector('.btn-principal');
+        botao.disabled = true;
+        await auth.cadastrar(nome, email, telefone, cpf, senha);
+        await auth.entrar(email, senha);
+        alert('Conta criada com sucesso!');
+        window.location.replace(voltar);
+    });
+
+    // RECUPERAR SENHA
+    document.getElementById('form-recuperar').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const inputEmail = document.getElementById('rec-email');
+        const email = inputEmail.value.trim();
+        if (erro(inputEmail, erroEmail(email))) return;
+
+        // TODO: pedir ao backend o envio do e-mail de redefinição quando a API estiver disponível
+        const mensagem = document.getElementById('rec-mensagem');
+        mensagem.textContent = 'Verifique seu e-mail: se houver uma conta com ' + email +
+            ', você receberá as instruções para redefinir a senha.';
+        mensagem.hidden = false;
+    });
+</script>
+
+</body>
+</html>

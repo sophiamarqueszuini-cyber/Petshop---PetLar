@@ -809,3 +809,23 @@ html {
 .contact-item a:hover {
     color: var(--accent-gold);
 }
+/* USUÁRIO LOGADO (auth.js) */
+.usuario-logado {
+    color: #666;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-sair {
+    text-decoration: none;
+    color: #885533;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #885533;
+}
+
+.btn-sair:hover {
+    color: #6d3f27;
+}

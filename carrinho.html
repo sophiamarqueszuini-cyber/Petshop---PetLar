@@ -6,6 +6,11 @@
     <title>Carrinho de Compras | PetLar Sanctuary</title>
     <link rel="icon" type="image/x-icon" href="Carrinho.png">
     <link rel="stylesheet" href="style.css">
+    <script src="auth.js"></script>
+    <script>
+        PetLarAuth.exigirLogin();
+        document.addEventListener('DOMContentLoaded', () => PetLarAuth.mostrarUsuario(document.querySelector('.menu-action')));
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
