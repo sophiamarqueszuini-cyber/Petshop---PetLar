@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// Regras do Firestore do PetLar: copie este conteúdo em
+// Console do Firebase › Firestore Database › Regras › Publicar.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado() {
+      return request.auth != null;
+    }
+
+    function ehAdmin() {
+      return logado()
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.idPerfil == 2;
+    }
+
+    // Cada cliente lê e edita só o próprio cadastro; a equipe (admin) lê todos.
+    match /usuarios/{uid} {
+      allow read: if logado() && (request.auth.uid == uid || ehAdmin());
+
+      // Ninguém se cadastra como admin pelo site: perfil 2 só para admin@petlar.com.
+      allow create: if logado() && request.auth.uid == uid
+        && request.resource.data.email == request.auth.token.email
+        && (request.resource.data.idPerfil == 1
+            || (request.resource.data.idPerfil == 2 && request.auth.token.email == 'admin@petlar.com'));
+
+      // Pode atualizar os dados, mas não trocar o próprio perfil nem o e-mail.
+      allow update: if logado() && request.auth.uid == uid
+        && request.resource.data.idPerfil == resource.data.idPerfil
+        && request.resource.data.email == resource.data.email;
+
+      allow delete: if false;
+    }
+  }
+}

@@ -6,11 +6,12 @@
     <title>PetLar Sanctuary</title>
     <link rel="icon" type="image/x-icon" href="Logo.png">
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script src="auth.js"></script>
-    <script>
-        PetLarAuth.exigirLogin();
-        document.addEventListener('DOMContentLoaded', () => PetLarAuth.mostrarUsuario(document.querySelector('.menu-action')));
-    </script>
+    <script>PetLarAuth.exigirLogin();</script>
 </head>
 <body>
 

@@ -6,6 +6,10 @@
     <title>Entrar | PetLar Sanctuary</title>
     <link rel="icon" type="image/x-icon" href="Logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <script src="auth.js"></script>
     <style>
         :root {
@@ -170,6 +174,15 @@
             font-size: 0.95rem;
         }
 
+        .aviso-config {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fdecea;
+            color: var(--erro);
+            font-size: 0.9rem;
+        }
+
         .descricao { margin-bottom: 20px; color: var(--texto-secundario); text-align: left; }
 
         @media (max-width: 480px) {
@@ -182,6 +195,10 @@
 <main class="card-login">
     <img src="Logo-semfundo.png" alt="PetLar Sanctuary" class="logo">
     <span class="tag">Santuário &amp; Curadoria</span>
+
+    <div id="aviso-config" class="aviso-config" hidden>
+        O login ainda não está ligado ao Firebase. Preencha o arquivo <code>firebase-config.js</code>.
+    </div>
 
     <!-- LOGIN -->
     <section id="tela-login" class="tela ativa">
@@ -295,9 +312,13 @@
     const voltar = /^[\w-]+\.html(#[\w-]*)?$/.test(parametros.get('voltar') || '') ? parametros.get('voltar') : 'index.html';
 
     // Quem já está logado vai direto para o site, como no app.
-    if (auth.usuarioLogado()) window.location.replace(voltar);
+    auth.pronto.then(usuario => { if (usuario) window.location.replace(voltar); });
 
-    auth.carregarContasPadrao();
+    if (!auth.configurado) {
+        const aviso = document.getElementById('aviso-config');
+        aviso.hidden = false;
+        document.querySelectorAll('.btn-principal').forEach(b => b.disabled = true);
+    }
 
     function erro(input, mensagem) {
         const campo = input.closest('.campo');
@@ -330,6 +351,19 @@
         if (primeiro) primeiro.focus();
     }
 
+    /** Trava o botão enquanto fala com o Firebase. */
+    async function aguardando(botao, acao) {
+        const texto = botao.textContent;
+        botao.disabled = true;
+        botao.textContent = 'Aguarde...';
+        try {
+            return await acao();
+        } finally {
+            botao.disabled = false;
+            botao.textContent = texto;
+        }
+    }
+
     document.querySelectorAll('[data-ir]').forEach(botao => {
         botao.addEventListener('click', () => irPara(botao.dataset.ir));
     });
@@ -357,17 +391,12 @@
         ].some(Boolean);
         if (temErro) return;
 
-        const botao = e.target.querySelector('.btn-principal');
-        botao.disabled = true;
-        await auth.carregarContasPadrao();
-        const usuario = await auth.entrar(email, senha);
-        botao.disabled = false;
-
-        if (!usuario) {
-            erro(inputSenha, 'E-mail ou senha incorretos');
-            return;
+        try {
+            await aguardando(e.target.querySelector('.btn-principal'), () => auth.entrar(email, senha));
+            window.location.replace(voltar);
+        } catch (falha) {
+            erro(inputSenha, falha.message);
         }
-        window.location.replace(voltar);
     });
 
     // CADASTRO
@@ -388,7 +417,7 @@
 
         const temErro = [
             erro(inputNome, nome.length < 3 ? 'Informe o nome completo' : null),
-            erro(inputEmail, erroEmail(email) || (auth.emailCadastrado(email) ? 'Já existe uma conta com este e-mail' : null)),
+            erro(inputEmail, erroEmail(email)),
             erro(inputTelefone, telefone && (telefone.length < 10 || telefone.length > 11) ? 'Telefone deve ter 10 ou 11 dígitos' : null),
             erro(inputCpf, cpf && cpf.length !== 11 ? 'CPF deve ter 11 dígitos' : null),
             erro(inputSenha, !senha ? 'Informe a senha' : senha.length < 6 ? 'A senha deve ter pelo menos 6 caracteres' : null),
@@ -396,25 +425,33 @@
         ].some(Boolean);
         if (temErro) return;
 
-        const botao = e.target.querySelector('.btn-principal');
-        botao.disabled = true;
-        await auth.cadastrar(nome, email, telefone, cpf, senha);
-        await auth.entrar(email, senha);
-        alert('Conta criada com sucesso!');
-        window.location.replace(voltar);
+        try {
+            await aguardando(e.target.querySelector('.btn-principal'), () => auth.cadastrar(nome, email, telefone, cpf, senha));
+            alert('Conta criada com sucesso!');
+            window.location.replace(voltar);
+        } catch (falha) {
+            const campo = falha.message.includes('e-mail') ? inputEmail
+                : falha.message.includes('senha') ? inputSenha : inputConfirmar;
+            erro(campo, falha.message);
+        }
     });
 
     // RECUPERAR SENHA
-    document.getElementById('form-recuperar').addEventListener('submit', (e) => {
+    document.getElementById('form-recuperar').addEventListener('submit', async (e) => {
         e.preventDefault();
         const inputEmail = document.getElementById('rec-email');
         const email = inputEmail.value.trim();
         if (erro(inputEmail, erroEmail(email))) return;
 
-        // TODO: pedir ao backend o envio do e-mail de redefinição quando a API estiver disponível
+        try {
+            await aguardando(e.target.querySelector('.btn-principal'), () => auth.recuperarSenha(email));
+        } catch (falha) {
+            erro(inputEmail, falha.message);
+            return;
+        }
         const mensagem = document.getElementById('rec-mensagem');
         mensagem.textContent = 'Verifique seu e-mail: se houver uma conta com ' + email +
-            ', você receberá as instruções para redefinir a senha.';
+            ', você receberá o link para criar uma nova senha (confira também o spam).';
         mensagem.hidden = false;
     });
 </script>
