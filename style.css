@@ -829,3 +829,18 @@ html {
 .btn-sair:hover {
     color: #6d3f27;
 }
+
+/* QR CODE DO VERSO DO CARTÃO (abre o Linktree do PetLar) */
+.qr-container {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 15px;
+}
+
+.qr-image {
+    width: 160px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    image-rendering: pixelated;
+}
