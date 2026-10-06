@@ -809,25 +809,64 @@ html {
 .contact-item a:hover {
     color: var(--accent-gold);
 }
-/* USUÁRIO LOGADO (auth.js) */
-.usuario-logado {
-    color: #666;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
+/* ÍCONES DA NAVBAR (carrinho e perfil, igual ao app) */
+.icone-nav {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #1a1a1a;
+    transition: color 0.2s, background-color 0.2s;
 }
 
-.btn-sair {
-    text-decoration: none;
+.icone-nav svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
+}
+
+.icone-nav:hover,
+.icone-nav.ativo {
     color: #885533;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 1px solid #885533;
+    background-color: rgba(136, 85, 51, 0.08);
 }
 
-.btn-sair:hover {
-    color: #6d3f27;
+.badge-carrinho {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background-color: #885533;
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: center;
+}
+
+.badge-carrinho[hidden] {
+    display: none;
+}
+
+/* SAUDAÇÃO NA CAPA ("Olá, Nome", preenchida pelo auth.js) */
+.saudacao-hero {
+    display: block;
+    color: #f4f0eb;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.menu-action {
+    gap: 0.75rem;
 }
 
 /* QR CODE DO VERSO DO CARTÃO (abre o Linktree do PetLar) */

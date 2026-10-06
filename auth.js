@@ -1,6 +1,6 @@
 /*
  * Login do site PetLar com Firebase:
- * - Firebase Authentication guarda e-mail/senha e mantém a sessão até clicar em "Sair";
+ * - Firebase Authentication guarda e-mail/senha e mantém a sessão até clicar em "Sair da conta" (perfil.html);
  * - Firestore guarda os dados do cliente na coleção "usuarios" (mesmos campos do Usuario.kt do app).
  * Depende de firebase-app/auth/firestore-compat.js e de firebase-config.js carregados antes.
  */
@@ -142,32 +142,34 @@
         window.location.replace(PAGINA_LOGIN);
     }
 
-    /** Coloca "Olá, Nome · Sair" na navbar. */
-    function mostrarUsuario(usuario, container) {
-        if (!usuario || !container) return;
+    /** Atualiza o cadastro do cliente logado (nome, telefone, CPF, endereços...). */
+    async function atualizarPerfil(dados) {
+        const conta = auth && auth.currentUser;
+        if (!conta) throw new Error('Sua sessão expirou. Entre de novo');
+        const alteracoes = Object.assign({}, dados, { dataAtualizacao: agora() });
+        try {
+            await documento(conta.uid).update(alteracoes);
+            if (dados.nome) await conta.updateProfile({ displayName: dados.nome });
+        } catch (e) {
+            throw new Error(mensagemDeErro(e));
+        }
+        return alteracoes;
+    }
 
-        const saudacao = document.createElement('span');
-        saudacao.className = 'usuario-logado';
-        saudacao.textContent = 'Olá, ' + usuario.nome.split(' ')[0];
-
-        const botaoSair = document.createElement('a');
-        botaoSair.href = '#';
-        botaoSair.className = 'btn-sair';
-        botaoSair.textContent = 'Sair';
-        botaoSair.addEventListener('click', function (e) {
-            e.preventDefault();
-            sair();
+    /** Coloca o primeiro nome do cliente nos elementos marcados com data-nome-usuario (ex.: "Olá, Sophia" na capa). */
+    function mostrarUsuario(usuario) {
+        if (!usuario) return;
+        const primeiroNome = usuario.nome.split(' ')[0];
+        document.querySelectorAll('[data-nome-usuario]').forEach(el => {
+            el.textContent = primeiroNome;
         });
-
-        container.prepend(saudacao);
-        container.append(botaoSair);
     }
 
     /**
      * Chamar no <head> das páginas protegidas: esconde a página enquanto confere a sessão;
-     * sem login, volta para o login; logado, mostra o usuário na navbar.
+     * sem login, volta para o login; logado, mostra o nome do usuário e chama aoEntrar(usuario), se houver.
      */
-    function exigirLogin() {
+    function exigirLogin(aoEntrar) {
         const html = document.documentElement;
         html.style.visibility = 'hidden';
         pronto.then(usuario => {
@@ -177,7 +179,8 @@
                 return;
             }
             const exibir = () => {
-                mostrarUsuario(usuario, document.querySelector('.menu-action'));
+                mostrarUsuario(usuario);
+                if (aoEntrar) aoEntrar(usuario);
                 html.style.visibility = '';
             };
             if (document.readyState === 'loading') {
@@ -196,6 +199,7 @@
         entrar,
         cadastrar,
         recuperarSenha,
+        atualizarPerfil,
         sair,
         exigirLogin
     };

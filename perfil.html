@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu perfil | PetLar Sanctuary</title>
+    <link rel="icon" type="image/x-icon" href="Logo.png">
+    <link rel="stylesheet" href="style.css?v=3">
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script>PetLarAuth.exigirLogin(usuario => iniciarPerfil(usuario));</script>
+    <style>
+        :root {
+            --superficie: #ffffff;
+            --fundo: #f4f3f0;
+            --texto: #1a1a1a;
+            --texto-secundario: #666666;
+            --marrom: #885533;
+            --marrom-hover: #6d3f27;
+            --dourado: #c5a880;
+            --borda: #e6e2dc;
+            --avatar: #ecd6c6;
+            --erro: #d9534f;
+            --sucesso: #2e7d32;
+        }
+
+        body { background: var(--fundo); }
+
+        .perfil-topo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 2rem 16px 1rem;
+        }
+
+        .perfil-topo h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background: none;
+            color: var(--texto);
+            cursor: pointer;
+        }
+
+        .btn-voltar:hover { background: rgba(136, 85, 51, 0.08); color: var(--marrom); }
+        .btn-voltar svg { width: 24px; height: 24px; fill: currentColor; }
+
+        .perfil-main {
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 0 16px 4rem;
+        }
+
+        .tela { display: none; }
+        .tela.ativa { display: block; }
+
+        .cartao {
+            background: var(--superficie);
+            border: 1px solid var(--borda);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cartao-identidade { text-align: center; padding: 2rem 1.5rem; }
+
+        .avatar {
+            width: 104px;
+            height: 104px;
+            margin: 0 auto 1.25rem;
+            border-radius: 50%;
+            background: var(--avatar);
+            color: var(--marrom);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 500;
+        }
+
+        .rotulo {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--texto-secundario);
+        }
+
+        .cartao-identidade .nome { font-size: 1.6rem; font-weight: 400; margin-top: 0.25rem; }
+        .cartao-identidade .email { color: var(--texto-secundario); font-size: 0.95rem; word-break: break-word; }
+
+        .cartao-lista { padding: 0.5rem 1.5rem; }
+
+        .item-lista {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            padding: 1.1rem 0;
+            border: none;
+            border-bottom: 1px solid var(--borda);
+            background: none;
+            color: var(--texto);
+            font-family: inherit;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        .item-lista:last-child { border-bottom: none; }
+        .item-lista span { text-transform: uppercase; letter-spacing: 0.5px; }
+        .item-lista strong { display: block; text-transform: none; letter-spacing: 0; }
+
+        button.item-lista { cursor: pointer; }
+        button.item-lista:hover { color: var(--marrom); }
+        .item-lista .seta { font-size: 1.3rem; }
+
+        .btn-contorno, .btn-principal {
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-contorno {
+            background: transparent;
+            color: var(--marrom);
+            border: 1px solid var(--marrom);
+        }
+
+        .btn-contorno:hover { background: var(--marrom); color: #fff; }
+
+        .btn-principal {
+            background: var(--marrom);
+            color: #fff;
+            border: 1px solid var(--marrom);
+        }
+
+        .btn-principal:hover { background: var(--marrom-hover); }
+        .btn-principal:disabled, .btn-contorno:disabled { opacity: 0.6; cursor: wait; }
+
+        .frase {
+            margin-top: 2rem;
+            text-align: center;
+            font-style: italic;
+            color: #8c786d;
+        }
+
+        /* Formulários (editar perfil e endereços) */
+        .campo { margin-bottom: 14px; }
+
+        .campo label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .campo .opcional { color: var(--texto-secundario); font-weight: 400; }
+
+        .campo input {
+            width: 100%;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            background: #fff;
+            color: var(--texto);
+        }
+
+        .campo input:focus { outline: none; border-color: var(--marrom); }
+        .campo input:disabled { background: var(--fundo); color: var(--texto-secundario); }
+        .campo.com-erro input { border-color: var(--erro); }
+
+        .ajuda, .erro { display: block; margin-top: 4px; font-size: 0.8rem; }
+        .ajuda { color: var(--texto-secundario); }
+        .erro { color: var(--erro); }
+        .erro:empty { display: none; }
+
+        .linha-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+
+        .mensagem {
+            margin-bottom: 1rem;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #eef6ee;
+            color: var(--sucesso);
+        }
+
+        .vazio { color: var(--texto-secundario); text-align: center; padding: 1rem 0; }
+
+        .endereco {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        .endereco:last-child { border-bottom: none; }
+        .endereco strong { display: block; }
+        .endereco p { color: var(--texto-secundario); font-size: 0.9rem; }
+
+        .btn-remover {
+            background: none;
+            border: none;
+            color: var(--erro);
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            flex-shrink: 0;
+        }
+
+        .titulo-cartao { font-size: 1.1rem; font-weight: 500; margin-bottom: 1rem; }
+
+        @media (max-width: 480px) {
+            .linha-campos { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">
+        <a href="index.html">
+            <img src="Logo_navbar.png" alt="Logo PetLar" style="width: 150px; height: auto; display: block;">
+        </a>
+    </div>
+    <div class="menu-links">
+        <a href="index.html#nosso-proposito">Nosso Propósito</a>
+        <a href="index.html#cuidados">Cuidados</a>
+        <a href="index.html#boutique">Boutique</a>
+        <a href="index.html#tutor">Espaço Tutor</a>
+        <a href="index.html#contato">Contato</a>
+    </div>
+    <div class="menu-action">
+        <a href="carrinho.html" class="icone-nav" aria-label="Carrinho" title="Carrinho">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span id="cart-count" class="badge-carrinho" hidden>0</span>
+        </a>
+        <a href="perfil.html" class="icone-nav ativo" aria-label="Meu perfil" title="Meu perfil" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </a>
+    </div>
+</nav>
+
+<header class="perfil-topo">
+    <button type="button" class="btn-voltar" id="btn-voltar" aria-label="Voltar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+    </button>
+    <h1 id="titulo-tela">Meu perfil</h1>
+</header>
+
+<main class="perfil-main">
+
+    <!-- PERFIL -->
+    <section id="tela-perfil" class="tela ativa" data-titulo="Meu perfil">
+        <div class="cartao cartao-identidade">
+            <div class="avatar" id="perfil-inicial"></div>
+            <span class="rotulo">Espaço do Tutor</span>
+            <h2 class="nome" id="perfil-nome"></h2>
+            <p class="email" id="perfil-email"></p>
+        </div>
+
+        <div class="cartao cartao-lista">
+            <div class="item-lista">
+                <span>Telefone /<strong id="perfil-telefone"></strong></span>
+            </div>
+            <div class="item-lista">
+                <span>CPF /<strong id="perfil-cpf"></strong></span>
+            </div>
+            <button type="button" class="item-lista" data-ir="tela-editar">
+                <span>Editar perfil</span><span class="seta">→</span>
+            </button>
+            <button type="button" class="item-lista" data-ir="tela-enderecos">
+                <span>Meus endereços</span><span class="seta">→</span>
+            </button>
+        </div>
+
+        <button type="button" class="btn-contorno" id="btn-sair">Sair da conta</button>
+
+        <p class="frase">“Onde o afeto encontra o seu lugar”</p>
+    </section>
+
+    <!-- EDITAR PERFIL -->
+    <section id="tela-editar" class="tela" data-titulo="Editar perfil">
+        <form id="form-editar" class="cartao" novalidate>
+            <div class="campo">
+                <label for="edit-nome">Nome completo</label>
+                <input type="text" id="edit-nome" autocomplete="name">
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="edit-email">E-mail</label>
+                <input type="email" id="edit-email" disabled>
+                <span class="ajuda">O e-mail da conta não pode ser alterado.</span>
+            </div>
+            <div class="campo">
+                <label for="edit-telefone">Telefone <span class="opcional">(opcional)</span></label>
+                <input type="tel" id="edit-telefone" autocomplete="tel" placeholder="(11) 99999-9999">
+                <span class="erro"></span>
+            </div>
+            <div class="campo">
+                <label for="edit-cpf">CPF <span class="opcional">(opcional)</span></label>
+                <input type="text" id="edit-cpf" inputmode="numeric" placeholder="000.000.000-00">
+                <span class="erro"></span>
+            </div>
+            <button type="submit" class="btn-principal">Salvar</button>
+        </form>
+    </section>
+
+    <!-- MEUS ENDEREÇOS -->
+    <section id="tela-enderecos" class="tela" data-titulo="Meus endereços">
+        <div class="cartao">
+            <div id="lista-enderecos"></div>
+        </div>
+
+        <form id="form-endereco" class="cartao" novalidate>
+            <h3 class="titulo-cartao">Novo endereço</h3>
+            <div class="linha-campos">
+                <div class="campo">
+                    <label for="end-apelido">Nome do endereço</label>
+                    <input type="text" id="end-apelido" placeholder="Casa, Trabalho...">
+                    <span class="erro"></span>
+                </div>
+                <div class="campo">
+                    <label for="end-cep">CEP</label>
+                    <input type="text" id="end-cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000">
+                    <span class="erro"></span>
+                </div>
+            </div>
+            <div class="campo">
+                <label for="end-rua">Rua</label>
+                <input type="text" id="end-rua" autocomplete="address-line1">
+                <span class="erro"></span>
+            </div>
+            <div class="linha-campos">
+                <div class="campo">
+                    <label for="end-numero">Número</label>
+                    <input type="text" id="end-numero">
+                    <span class="erro"></span>
+                </div>
+                <div class="campo">
+                    <label for="end-complemento">Complemento <span class="opcional">(opcional)</span></label>
+                    <input type="text" id="end-complemento" autocomplete="address-line2">
+                    <span class="erro"></span>
+                </div>
+            </div>
+            <div class="campo">
+                <label for="end-bairro">Bairro</label>
+                <input type="text" id="end-bairro">
+                <span class="erro"></span>
+            </div>
+            <div class="linha-campos">
+                <div class="campo">
+                    <label for="end-cidade">Cidade</label>
+                    <input type="text" id="end-cidade" autocomplete="address-level2">
+                    <span class="erro"></span>
+                </div>
+                <div class="campo">
+                    <label for="end-uf">Estado (UF)</label>
+                    <input type="text" id="end-uf" maxlength="2" autocomplete="address-level1">
+                    <span class="erro"></span>
+                </div>
+            </div>
+            <button type="submit" class="btn-principal">Adicionar endereço</button>
+        </form>
+    </section>
+
+</main>
+
+<script>
+    const auth = window.PetLarAuth;
+    let usuario = null;
+
+    // Contador do carrinho (mesmo localStorage do index e do carrinho).
+    (function () {
+        const carrinho = JSON.parse(localStorage.getItem('petlarCarrinho') || '[]');
+        const total = carrinho.reduce((soma, item) => soma + item.quantidade, 0);
+        const badge = document.getElementById('cart-count');
+        badge.textContent = total;
+        badge.hidden = total === 0;
+    })();
+
+    function formatarTelefone(t) {
+        if (!t) return '';
+        return t.length === 11
+            ? t.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+            : t.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    }
+
+    function formatarCpf(c) {
+        return c ? c.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : '';
+    }
+
+    function erro(input, mensagem) {
+        const campo = input.closest('.campo');
+        campo.classList.toggle('com-erro', !!mensagem);
+        campo.querySelector('.erro').textContent = mensagem || '';
+        return !!mensagem;
+    }
+
+    function limparErros(form) {
+        form.querySelectorAll('.campo').forEach(c => {
+            c.classList.remove('com-erro');
+            const span = c.querySelector('.erro');
+            if (span) span.textContent = '';
+        });
+    }
+
+    /** Trava o botão enquanto fala com o Firebase. */
+    async function aguardando(botao, acao) {
+        const texto = botao.textContent;
+        botao.disabled = true;
+        botao.textContent = 'Aguarde...';
+        try {
+            return await acao();
+        } finally {
+            botao.disabled = false;
+            botao.textContent = texto;
+        }
+    }
+
+    function mostrarAviso(tela, texto) {
+        const antigo = tela.querySelector('.mensagem');
+        if (antigo) antigo.remove();
+        const aviso = document.createElement('p');
+        aviso.className = 'mensagem';
+        aviso.textContent = texto;
+        tela.prepend(aviso);
+        setTimeout(() => aviso.remove(), 4000);
+    }
+
+    function irPara(idTela) {
+        document.querySelectorAll('.tela').forEach(t => t.classList.toggle('ativa', t.id === idTela));
+        document.getElementById('titulo-tela').textContent = document.getElementById(idTela).dataset.titulo;
+        document.querySelectorAll('form').forEach(limparErros);
+        if (idTela === 'tela-editar') preencherFormulario();
+        window.scrollTo(0, 0);
+    }
+
+    function telaAtual() {
+        return document.querySelector('.tela.ativa').id;
+    }
+
+    function preencherPerfil() {
+        document.getElementById('perfil-inicial').textContent = usuario.nome.trim().charAt(0).toUpperCase();
+        document.getElementById('perfil-nome').textContent = usuario.nome;
+        document.getElementById('perfil-email').textContent = usuario.email;
+        document.getElementById('perfil-telefone').textContent = formatarTelefone(usuario.telefone) || 'Não informado';
+        document.getElementById('perfil-cpf').textContent = formatarCpf(usuario.cpf) || 'Não informado';
+    }
+
+    function preencherFormulario() {
+        document.getElementById('edit-nome').value = usuario.nome;
+        document.getElementById('edit-email').value = usuario.email;
+        document.getElementById('edit-telefone').value = formatarTelefone(usuario.telefone);
+        document.getElementById('edit-cpf').value = formatarCpf(usuario.cpf);
+    }
+
+    function listarEnderecos() {
+        const lista = document.getElementById('lista-enderecos');
+        const enderecos = usuario.enderecos || [];
+        lista.innerHTML = '';
+        if (!enderecos.length) {
+            lista.innerHTML = '<p class="vazio">Nenhum endereço cadastrado ainda.</p>';
+            return;
+        }
+        enderecos.forEach((end, indice) => {
+            const item = document.createElement('div');
+            item.className = 'endereco';
+
+            const texto = document.createElement('div');
+            const titulo = document.createElement('strong');
+            titulo.textContent = end.apelido;
+            const linha1 = document.createElement('p');
+            linha1.textContent = end.rua + ', ' + end.numero + (end.complemento ? ' — ' + end.complemento : '');
+            const linha2 = document.createElement('p');
+            linha2.textContent = end.bairro + ', ' + end.cidade + ' - ' + end.uf + ' · CEP ' + end.cep.replace(/(\d{5})(\d{3})/, '$1-$2');
+            texto.append(titulo, linha1, linha2);
+
+            const remover = document.createElement('button');
+            remover.type = 'button';
+            remover.className = 'btn-remover';
+            remover.textContent = 'Remover';
+            remover.addEventListener('click', () => removerEndereco(indice, remover));
+
+            item.append(texto, remover);
+            lista.append(item);
+        });
+    }
+
+    async function salvarEnderecos(enderecos, botao) {
+        await aguardando(botao, () => auth.atualizarPerfil({ enderecos }));
+        usuario.enderecos = enderecos;
+        listarEnderecos();
+    }
+
+    async function removerEndereco(indice, botao) {
+        if (!confirm('Remover o endereço "' + usuario.enderecos[indice].apelido + '"?')) return;
+        try {
+            await salvarEnderecos(usuario.enderecos.filter((_, i) => i !== indice), botao);
+        } catch (falha) {
+            alert(falha.message);
+        }
+    }
+
+    /** Chamado pelo auth.js quando a sessão é confirmada. */
+    function iniciarPerfil(dados) {
+        usuario = dados;
+        preencherPerfil();
+        listarEnderecos();
+    }
+
+    document.querySelectorAll('[data-ir]').forEach(botao => {
+        botao.addEventListener('click', () => irPara(botao.dataset.ir));
+    });
+
+    document.getElementById('btn-voltar').addEventListener('click', () => {
+        if (telaAtual() !== 'tela-perfil') irPara('tela-perfil');
+        else window.location.href = 'index.html';
+    });
+
+    document.getElementById('btn-sair').addEventListener('click', (e) => {
+        e.currentTarget.disabled = true;
+        auth.sair();
+    });
+
+    // EDITAR PERFIL
+    document.getElementById('form-editar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inputNome = document.getElementById('edit-nome');
+        const inputTelefone = document.getElementById('edit-telefone');
+        const inputCpf = document.getElementById('edit-cpf');
+
+        const nome = inputNome.value.trim();
+        const telefone = inputTelefone.value.replace(/\D/g, '');
+        const cpf = inputCpf.value.replace(/\D/g, '');
+
+        const temErro = [
+            erro(inputNome, nome.length < 3 ? 'Informe o nome completo' : null),
+            erro(inputTelefone, telefone && (telefone.length < 10 || telefone.length > 11) ? 'Telefone deve ter 10 ou 11 dígitos' : null),
+            erro(inputCpf, cpf && cpf.length !== 11 ? 'CPF deve ter 11 dígitos' : null)
+        ].some(Boolean);
+        if (temErro) return;
+
+        const dados = { nome, telefone: telefone || null, cpf: cpf || null };
+        try {
+            await aguardando(e.target.querySelector('.btn-principal'), () => auth.atualizarPerfil(dados));
+        } catch (falha) {
+            erro(inputNome, falha.message);
+            return;
+        }
+        Object.assign(usuario, dados);
+        preencherPerfil();
+        document.querySelectorAll('[data-nome-usuario]').forEach(el => el.textContent = nome.split(' ')[0]);
+        irPara('tela-perfil');
+        mostrarAviso(document.getElementById('tela-perfil'), 'Perfil atualizado com sucesso!');
+    });
+
+    // ENDEREÇOS: o CEP preenche rua, bairro, cidade e UF pelo ViaCEP.
+    const inputCep = document.getElementById('end-cep');
+    inputCep.addEventListener('input', async () => {
+        const cep = inputCep.value.replace(/\D/g, '');
+        if (cep.length !== 8) return;
+        try {
+            const resposta = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
+            const dados = await resposta.json();
+            if (dados.erro) {
+                erro(inputCep, 'CEP não encontrado');
+                return;
+            }
+            erro(inputCep, null);
+            document.getElementById('end-rua').value = dados.logradouro || '';
+            document.getElementById('end-bairro').value = dados.bairro || '';
+            document.getElementById('end-cidade').value = dados.localidade || '';
+            document.getElementById('end-uf').value = dados.uf || '';
+            document.getElementById('end-numero').focus();
+        } catch (_) {
+            // Sem conexão com o ViaCEP: o cliente preenche à mão.
+        }
+    });
+
+    document.getElementById('form-endereco').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const valor = id => document.getElementById(id).value.trim();
+        const obrigatorio = (id, mensagem) => erro(document.getElementById(id), valor(id) ? null : mensagem);
+
+        const cep = valor('end-cep').replace(/\D/g, '');
+        const uf = valor('end-uf').toUpperCase();
+
+        const temErro = [
+            obrigatorio('end-apelido', 'Dê um nome ao endereço'),
+            erro(inputCep, cep.length !== 8 ? 'CEP deve ter 8 dígitos' : null),
+            obrigatorio('end-rua', 'Informe a rua'),
+            obrigatorio('end-numero', 'Informe o número'),
+            obrigatorio('end-bairro', 'Informe o bairro'),
+            obrigatorio('end-cidade', 'Informe a cidade'),
+            erro(document.getElementById('end-uf'), /^[A-Z]{2}$/.test(uf) ? null : 'Use a sigla, ex.: SP')
+        ].some(Boolean);
+        if (temErro) return;
+
+        const endereco = {
+            apelido: valor('end-apelido'),
+            cep,
+            rua: valor('end-rua'),
+            numero: valor('end-numero'),
+            complemento: valor('end-complemento') || null,
+            bairro: valor('end-bairro'),
+            cidade: valor('end-cidade'),
+            uf
+        };
+        try {
+            await salvarEnderecos((usuario.enderecos || []).concat(endereco), form.querySelector('.btn-principal'));
+        } catch (falha) {
+            erro(document.getElementById('end-apelido'), falha.message);
+            return;
+        }
+        form.reset();
+        mostrarAviso(document.getElementById('tela-enderecos'), 'Endereço adicionado!');
+    });
+</script>
+
+</body>
+</html>

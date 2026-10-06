@@ -10,8 +10,15 @@ Site do **PetLar Sanctuary**, um pet shop de hospitalidade e spa animal: “Onde
 
 - **Login e cadastro**, no mesmo modelo do app: só entra no site quem tem conta.
   - Cadastro com nome, e-mail, telefone e CPF (estes dois opcionais) e senha de no mínimo 6 caracteres.
-  - O login continua ativo até clicar em **Sair**.
+  - O login continua ativo até clicar em **Sair da conta**, no perfil.
   - **Esqueci minha senha** envia por e-mail o link para criar uma senha nova.
+- **Navbar igual ao app:** ícone do carrinho (com a quantidade de itens) e ícone do bonequinho, que abre o perfil.
+- **Saudação na capa:** “Olá, Nome” logo acima do título.
+- **Meu perfil** (`perfil.html`), igual ao app:
+  - inicial do nome, nome e e-mail do tutor, telefone e CPF;
+  - **Editar perfil**: altera nome, telefone e CPF (o e-mail não muda);
+  - **Meus endereços**: adiciona e remove endereços, com o CEP preenchendo rua, bairro e cidade automaticamente;
+  - **Sair da conta**.
 - **Página inicial** com as seções Nosso Propósito, Cuidados (serviços), Boutique (produtos), Espaço do Tutor e Contato & Redes.
 - **Carrinho de compras:**
   - alterar a quantidade e remover itens;
@@ -34,6 +41,7 @@ Site do **PetLar Sanctuary**, um pet shop de hospitalidade e spa animal: “Onde
 | --- | --- |
 | `index.html` | Página inicial (exige login) |
 | `carrinho.html` | Carrinho e finalização da compra (exige login) |
+| `perfil.html` | Perfil do cliente, edição dos dados e endereços (exige login) |
 | `login.html` | Telas de entrar, cadastrar e recuperar senha |
 | `cartao.html` | Cartão de visita digital (público) |
 | `auth.js` | Login, cadastro, sessão e proteção das páginas |
