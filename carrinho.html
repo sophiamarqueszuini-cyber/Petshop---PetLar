@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
-    <script src="auth.js?v=2"></script>
+    <script src="auth.js?v=3"></script>
     <script>PetLarAuth.exigirLogin();</script>
     <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -889,8 +889,9 @@
         }
     }
 
-    function finalizarPedido(event) {
+    async function finalizarPedido(event) {
     event.preventDefault();
+    const botaoFinalizar = event.currentTarget;
     
     const carrinho = obterCarrinho();
 
@@ -906,7 +907,29 @@
     let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
     if (totalGeral < 0) totalGeral = 0;
 
-    const numeroPedido = Math.floor(100000 + Math.random() * 900000);
+    // Grava o pedido no Firestore para aparecer no painel administrativo (igual ao app).
+    let numeroPedido;
+    const textoBotao = botaoFinalizar.textContent;
+    botaoFinalizar.disabled = true;
+    botaoFinalizar.textContent = 'Aguarde...';
+    try {
+        const usuario = await PetLarAuth.pronto;
+        numeroPedido = await PetLarAuth.registrarPedido(usuario, {
+            subtotal: centavos(subtotalProdutos),
+            desconto: centavos(descontoAplicado),
+            frete: freteAtual,
+            total: centavos(totalGeral),
+            formaPagamento: formaPagamentoTexto,
+            quantidadeItens: carrinho.reduce((acc, p) => acc + p.quantidade, 0),
+            itens: carrinho.map(p => ({ nome: p.nome, quantidade: p.quantidade, precoUnitario: p.preco }))
+        });
+    } catch (falha) {
+        alert('Não foi possível finalizar o pedido: ' + falha.message);
+        return;
+    } finally {
+        botaoFinalizar.disabled = false;
+        botaoFinalizar.textContent = textoBotao;
+    }
 
     localStorage.removeItem('petlarCarrinho');
 
@@ -947,6 +970,10 @@
         `;
         carrinhoVazioDiv.style.display = 'block';
     }
+}
+
+function centavos(valor) {
+    return Math.round(valor * 100) / 100;
 }
 
 let etapaStatus = 0;

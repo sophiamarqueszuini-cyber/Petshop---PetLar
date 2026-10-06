@@ -31,5 +31,23 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // Pedidos finalizados no carrinho (mesmos campos do PedidoRepositorio do app).
+    match /pedidos/{id} {
+      // O cliente vê os próprios pedidos; a equipe vê todos.
+      allow read: if logado() && (resource.data.idCliente == request.auth.uid || ehAdmin());
+
+      // O cliente só cria pedido em nome próprio e sempre na primeira etapa.
+      allow create: if logado()
+        && request.resource.data.idCliente == request.auth.uid
+        && request.resource.data.status == 'Pagamento confirmado';
+
+      // Só a equipe muda o pedido, e apenas o status.
+      allow update: if ehAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status in ['Pagamento confirmado', 'Em separação', 'Enviado', 'Entregue', 'Cancelado'];
+
+      allow delete: if false;
+    }
   }
 }

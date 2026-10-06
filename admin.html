@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel administrativo | PetLar Sanctuary</title>
+    <link rel="icon" type="image/x-icon" href="Logo.png">
+    <link rel="stylesheet" href="style.css?v=3">
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js?v=3"></script>
+    <script>PetLarAuth.exigirLogin(usuario => iniciarPainel(usuario), PetLarAuth.PERFIL.ADMINISTRATIVO);</script>
+    <style>
+        :root {
+            --superficie: #ffffff;
+            --fundo: #f4f3f0;
+            --texto: #1a1a1a;
+            --texto-secundario: #666666;
+            --marrom: #885533;
+            --marrom-hover: #6d3f27;
+            --dourado: #c5a880;
+            --borda: #e6e2dc;
+            --pilula: #ecd6c6;
+            --erro: #d9534f;
+        }
+
+        body { background: var(--fundo); }
+
+        .btn-sair-admin {
+            background: none;
+            border: none;
+            color: var(--marrom);
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-sair-admin:hover { color: var(--marrom-hover); text-decoration: underline; }
+
+        .painel {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 16px 5rem;
+        }
+
+        .rotulo {
+            display: block;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--dourado);
+        }
+
+        .painel h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 400; margin-top: 0.5rem; }
+        .painel h2 { font-size: 1.7rem; font-weight: 400; margin: 0.25rem 0 1.25rem; }
+        .subtitulo { color: var(--texto-secundario); margin-bottom: 2rem; }
+
+        .secao { margin-top: 3rem; }
+
+        .cartao {
+            background: var(--superficie);
+            border: 1px solid var(--borda);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        /* Indicadores */
+        .indicadores {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .indicador .valor { display: block; font-size: 1.7rem; color: var(--marrom); line-height: 1.2; }
+        .indicador .nome {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--texto-secundario);
+        }
+
+        /* Pedidos */
+        .lista-pedidos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1rem;
+        }
+
+        .pedido-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .pedido-topo h3 { font-size: 1.2rem; font-weight: 500; }
+
+        .status {
+            flex-shrink: 0;
+            padding: 0.2rem 0.75rem;
+            border-radius: 999px;
+            background: var(--pilula);
+            color: var(--marrom-hover);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status.cancelado { background: #f6dcdb; color: #a23b37; }
+        .status.entregue { background: #e2efe2; color: #2e6b31; }
+
+        .pedido .cliente, .pedido .detalhes { color: var(--texto-secundario); font-size: 0.9rem; }
+        .pedido .cliente { margin-top: 0.25rem; word-break: break-word; }
+
+        .itens { margin: 1rem 0; padding: 0.75rem 0; border-top: 1px solid var(--borda); border-bottom: 1px solid var(--borda); }
+        .item { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.9rem; padding: 0.15rem 0; }
+        .item span:last-child { white-space: nowrap; }
+
+        .pedido-rodape { display: flex; justify-content: space-between; align-items: center; }
+        .pedido-rodape .total { font-size: 1.2rem; font-weight: 600; }
+
+        .btn-status {
+            background: none;
+            border: none;
+            color: var(--marrom);
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-status:hover { text-decoration: underline; }
+
+        /* Clientes */
+        .cliente-linha { padding: 0.9rem 0; border-bottom: 1px solid var(--borda); }
+        .cliente-linha:last-child { border-bottom: none; }
+        .cliente-linha strong { display: block; font-weight: 600; }
+        .cliente-linha span { color: var(--texto-secundario); font-size: 0.9rem; word-break: break-word; }
+
+        .vazio { color: var(--texto-secundario); }
+        .erro-carregar { color: var(--erro); }
+
+        /* Janela de alterar status */
+        dialog {
+            width: min(380px, calc(100% - 32px));
+            border: none;
+            border-radius: 16px;
+            padding: 1.5rem;
+            font-family: inherit;
+            color: var(--texto);
+        }
+
+        dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+        dialog h3 { font-size: 1.2rem; font-weight: 500; margin-bottom: 1rem; }
+
+        .opcao-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            cursor: pointer;
+        }
+
+        .opcao-status input { accent-color: var(--marrom); width: 18px; height: 18px; }
+
+        .dialog-acoes { display: flex; justify-content: flex-end; margin-top: 1rem; }
+
+        @media (max-width: 900px) {
+            .indicadores { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 420px) {
+            .lista-pedidos { grid-template-columns: 1fr; }
+            .indicador .valor { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">
+        <img src="Logo_navbar.png" alt="Logo PetLar" style="width: 150px; height: auto; display: block;">
+    </div>
+    <div class="menu-action">
+        <button type="button" class="btn-sair-admin" id="btn-sair">Sair</button>
+    </div>
+</nav>
+
+<main class="painel">
+    <span class="rotulo">Painel administrativo</span>
+    <h1>Olá, <span id="nome-admin"></span></h1>
+    <p class="subtitulo">Acompanhe os pedidos e os clientes da PetLar.</p>
+
+    <div class="indicadores">
+        <div class="cartao indicador"><span class="valor" id="ind-pedidos">–</span><span class="nome">Pedidos</span></div>
+        <div class="cartao indicador"><span class="valor" id="ind-faturamento">–</span><span class="nome">Faturamento</span></div>
+        <div class="cartao indicador"><span class="valor" id="ind-clientes">–</span><span class="nome">Clientes</span></div>
+        <div class="cartao indicador"><span class="valor" id="ind-ticket">–</span><span class="nome">Ticket médio</span></div>
+    </div>
+
+    <section class="secao">
+        <span class="rotulo">Pedidos</span>
+        <h2>Pedidos recentes</h2>
+        <div id="lista-pedidos" class="lista-pedidos"></div>
+        <p id="sem-pedidos" class="vazio" hidden>Nenhum pedido ainda. Eles aparecem aqui quando um cliente finaliza a compra.</p>
+    </section>
+
+    <section class="secao">
+        <span class="rotulo">Clientes</span>
+        <h2>Clientes cadastrados</h2>
+        <div id="lista-clientes" class="cartao"></div>
+    </section>
+</main>
+
+<dialog id="dialog-status">
+    <h3 id="titulo-status"></h3>
+    <form id="form-status"></form>
+    <div class="dialog-acoes">
+        <button type="button" class="btn-status" id="btn-cancelar-status">Cancelar</button>
+    </div>
+</dialog>
+
+<script>
+    const auth = window.PetLarAuth;
+    const STATUS_CANCELADO = auth.STATUS_PEDIDO[auth.STATUS_PEDIDO.length - 1];
+    const STATUS_ENTREGUE = 'Entregue';
+    let pedidos = [];
+
+    const emReais = valor => valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    /** "2026-10-05 22:04:00" → "05/10/2026 22:04" (ou só a data). */
+    function dataBr(data, comHora = true) {
+        if (!data) return '';
+        const [dia, hora] = data.split(' ');
+        const [a, m, d] = dia.split('-');
+        return d + '/' + m + '/' + a + (comHora && hora ? ' ' + hora.slice(0, 5) : '');
+    }
+
+    function criar(tag, classe, texto) {
+        const el = document.createElement(tag);
+        if (classe) el.className = classe;
+        if (texto !== undefined) el.textContent = texto;
+        return el;
+    }
+
+    function montarIndicadores(totalClientes) {
+        // Pedidos cancelados não entram no faturamento
+        const validos = pedidos.filter(p => p.status !== STATUS_CANCELADO);
+        const faturamento = validos.reduce((soma, p) => soma + p.total, 0);
+        document.getElementById('ind-pedidos').textContent = pedidos.length;
+        document.getElementById('ind-faturamento').textContent = emReais(faturamento);
+        document.getElementById('ind-ticket').textContent = emReais(validos.length ? faturamento / validos.length : 0);
+        if (totalClientes !== undefined) document.getElementById('ind-clientes').textContent = totalClientes;
+    }
+
+    function montarPedidos() {
+        const lista = document.getElementById('lista-pedidos');
+        lista.innerHTML = '';
+        document.getElementById('sem-pedidos').hidden = pedidos.length > 0;
+
+        pedidos.forEach(p => {
+            const cartao = criar('article', 'cartao pedido');
+
+            const topo = criar('div', 'pedido-topo');
+            const classeStatus = p.status === STATUS_CANCELADO ? ' cancelado' : p.status === STATUS_ENTREGUE ? ' entregue' : '';
+            topo.append(criar('h3', '', 'Pedido #' + p.idPedido), criar('span', 'status' + classeStatus, p.status));
+
+            const itens = p.quantidadeItens === 1 ? '1 item' : p.quantidadeItens + ' itens';
+            cartao.append(
+                topo,
+                criar('p', 'cliente', p.nomeCliente + ' · ' + p.emailCliente),
+                criar('p', 'detalhes', dataBr(p.dataPedido) + ' · ' + itens + ' · ' + p.formaPagamento)
+            );
+
+            if (p.itens && p.itens.length) {
+                const listaItens = criar('div', 'itens');
+                p.itens.forEach(item => {
+                    const linha = criar('div', 'item');
+                    linha.append(
+                        criar('span', '', item.quantidade + '× ' + item.nome),
+                        criar('span', '', emReais(item.precoUnitario * item.quantidade))
+                    );
+                    listaItens.append(linha);
+                });
+                cartao.append(listaItens);
+            }
+
+            const rodape = criar('div', 'pedido-rodape');
+            const botao = criar('button', 'btn-status', 'Alterar status');
+            botao.type = 'button';
+            botao.addEventListener('click', () => escolherStatus(p));
+            rodape.append(criar('span', 'total', emReais(p.total)), botao);
+            cartao.append(rodape);
+
+            lista.append(cartao);
+        });
+    }
+
+    function montarClientes(clientes) {
+        const lista = document.getElementById('lista-clientes');
+        lista.innerHTML = '';
+        if (!clientes.length) {
+            lista.append(criar('p', 'vazio', 'Nenhum cliente cadastrado ainda.'));
+            return;
+        }
+        clientes.forEach(c => {
+            const linha = criar('div', 'cliente-linha');
+            linha.append(
+                criar('strong', '', c.nome),
+                criar('span', '', c.email + ' · cliente desde ' + dataBr(c.dataCadastro, false))
+            );
+            lista.append(linha);
+        });
+    }
+
+    // ALTERAR STATUS (mesmas etapas do app)
+    const dialogo = document.getElementById('dialog-status');
+    document.getElementById('btn-cancelar-status').addEventListener('click', () => dialogo.close());
+
+    function escolherStatus(pedido) {
+        document.getElementById('titulo-status').textContent = 'Status do pedido #' + pedido.idPedido;
+        const form = document.getElementById('form-status');
+        form.innerHTML = '';
+        auth.STATUS_PEDIDO.forEach(status => {
+            const opcao = criar('label', 'opcao-status');
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'status';
+            radio.checked = status === pedido.status;
+            radio.addEventListener('change', () => salvarStatus(pedido, status, form));
+            opcao.append(radio, criar('span', '', status));
+            form.append(opcao);
+        });
+        dialogo.showModal();
+    }
+
+    async function salvarStatus(pedido, status, form) {
+        form.querySelectorAll('input').forEach(i => i.disabled = true);
+        try {
+            await auth.alterarStatusPedido(pedido.ref, status);
+            pedido.status = status;
+            dialogo.close();
+            montarIndicadores();
+            montarPedidos();
+        } catch (falha) {
+            alert(falha.message);
+            form.querySelectorAll('input').forEach(i => i.disabled = false);
+        }
+    }
+
+    /** Chamado pelo auth.js quando a sessão de admin é confirmada. */
+    async function iniciarPainel(admin) {
+        document.getElementById('nome-admin').textContent = admin.nome;
+        try {
+            const [listaPedidos, clientes] = await Promise.all([auth.listarPedidos(), auth.listarClientes()]);
+            pedidos = listaPedidos;
+            montarIndicadores(clientes.length);
+            montarPedidos();
+            montarClientes(clientes);
+        } catch (falha) {
+            console.error('PetLar: erro ao carregar o painel', falha);
+            const aviso = criar('p', 'erro-carregar',
+                'Não foi possível carregar os pedidos e os clientes. Confira se as regras do Firestore (firestore.rules) foram publicadas no Console do Firebase.');
+            document.querySelector('.subtitulo').after(aviso);
+        }
+    }
+
+    document.getElementById('btn-sair').addEventListener('click', (e) => {
+        e.currentTarget.disabled = true;
+        auth.sair();
+    });
+</script>
+
+</body>
+</html>

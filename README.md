@@ -19,12 +19,17 @@ Site do **PetLar Sanctuary**, um pet shop de hospitalidade e spa animal: “Onde
   - **Editar perfil**: altera nome, telefone e CPF (o e-mail não muda);
   - **Meus endereços**: adiciona e remove endereços, com o CEP preenchendo rua, bairro e cidade automaticamente;
   - **Sair da conta**.
+- **Painel administrativo** (`admin.html`), igual ao app: a conta `admin@petlar.com` entra direto nele.
+  - indicadores de pedidos, faturamento (sem os cancelados), clientes e ticket médio;
+  - pedidos recentes com cliente, itens, pagamento e total, e o botão **Alterar status** (Pagamento confirmado › Em separação › Enviado › Entregue, ou Cancelado);
+  - lista dos clientes cadastrados.
 - **Página inicial** com as seções Nosso Propósito, Cuidados (serviços), Boutique (produtos), Espaço do Tutor e Contato & Redes.
 - **Carrinho de compras:**
   - alterar a quantidade e remover itens;
   - calcular o frete pelo CEP;
   - aplicar o cupom `PETLAR10` (10% de desconto);
-  - pagar por Pix, cartão, boleto ou carteiras digitais.
+  - pagar por Pix, cartão, boleto ou carteiras digitais;
+  - o pedido finalizado fica salvo no Firestore e aparece no painel administrativo.
 - **Cartão digital** (`cartao.html`), com links para o site, o WhatsApp, o Instagram e a localização.
 
 ## Tecnologias
@@ -32,7 +37,7 @@ Site do **PetLar Sanctuary**, um pet shop de hospitalidade e spa animal: “Onde
 - HTML, CSS e JavaScript, sem framework.
 - [Firebase](https://firebase.google.com/):
   - **Authentication** guarda o e-mail e a senha.
-  - **Cloud Firestore** guarda os dados dos clientes.
+  - **Cloud Firestore** guarda os dados dos clientes (coleção `usuarios`) e os pedidos (coleção `pedidos`).
 - Hospedagem no GitHub Pages.
 
 ## Estrutura
@@ -41,6 +46,7 @@ Site do **PetLar Sanctuary**, um pet shop de hospitalidade e spa animal: “Onde
 | --- | --- |
 | `index.html` | Página inicial (exige login) |
 | `carrinho.html` | Carrinho e finalização da compra (exige login) |
+| `admin.html` | Painel administrativo: pedidos, status e clientes (só para a conta admin) |
 | `perfil.html` | Perfil do cliente, edição dos dados e endereços (exige login) |
 | `login.html` | Telas de entrar, cadastrar e recuperar senha |
 | `cartao.html` | Cartão de visita digital (público) |
@@ -53,7 +59,9 @@ Site do **PetLar Sanctuary**, um pet shop de hospitalidade e spa animal: “Onde
 
 - Cada cliente cria a própria conta em **Cadastre-se**. Os dados ficam na coleção `usuarios` do Firestore, com os mesmos campos do modelo `Usuario` do app.
 - A conta da equipe é `admin@petlar.com` (perfil Administrativo). Ela é criada direto no console do Firebase, nunca pelo site.
-- As regras do `firestore.rules` garantem duas coisas: cada cliente só vê e altera o próprio cadastro, e ninguém consegue se transformar em admin.
+- As regras do `firestore.rules` garantem que:
+  - cada cliente só vê e altera o próprio cadastro, e ninguém consegue se transformar em admin;
+  - o cliente só cria pedidos em nome próprio, e só a equipe vê todos os pedidos e muda o status deles.
   - Se alterar esse arquivo, publique o novo conteúdo em **Console do Firebase › Firestore Database › Regras**.
 - Os valores do `firebase-config.js` são públicos por natureza: eles só identificam o projeto. Quem protege os dados são as regras do Firestore.
 

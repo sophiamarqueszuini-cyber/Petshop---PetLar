@@ -1,18 +1,26 @@
 /*
  * Login do site PetLar com Firebase:
  * - Firebase Authentication guarda e-mail/senha e mantém a sessão até clicar em "Sair da conta" (perfil.html);
- * - Firestore guarda os dados do cliente na coleção "usuarios" (mesmos campos do Usuario.kt do app).
+ * - Firestore guarda os dados do cliente na coleção "usuarios" (mesmos campos do Usuario.kt do app)
+ *   e os pedidos na coleção "pedidos" (mesmos campos do PedidoRepositorio.kt do app);
+ * - como no app, a conta administrativa entra no painel (admin.html) e os clientes, na loja.
  * Depende de firebase-app/auth/firestore-compat.js e de firebase-config.js carregados antes.
  */
 (function () {
     const PAGINA_LOGIN = 'login.html';
+    const PAGINA_LOJA = 'index.html';
+    const PAGINA_ADMIN = 'admin.html';
     const COLECAO = 'usuarios';
+    const COLECAO_PEDIDOS = 'pedidos';
 
     /** Conta da equipe, igual ao app (UsuarioRepositorio.ADMIN_EMAIL). */
     const ADMIN_EMAIL = 'admin@petlar.com';
 
     /** Os dois acessos, ligados aos perfis do banco (tabela Perfil). */
     const PERFIL = { CLIENTE: 1, ADMINISTRATIVO: 2 };
+
+    /** Etapas do pedido, na ordem (PedidoRepositorio.STATUS do app). O último não entra no faturamento. */
+    const STATUS_PEDIDO = ['Pagamento confirmado', 'Em separação', 'Enviado', 'Entregue', 'Cancelado'];
 
     const EMAIL_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -165,17 +173,33 @@
         });
     }
 
+    function ehAdmin(usuario) {
+        return !!usuario && usuario.idPerfil === PERFIL.ADMINISTRATIVO;
+    }
+
+    /** Página de entrada de cada perfil: a equipe vai para o painel, o cliente para a loja (ou para onde estava indo). */
+    function paginaInicial(usuario, voltar) {
+        if (ehAdmin(usuario)) return PAGINA_ADMIN;
+        return voltar && voltar.split('#')[0] !== PAGINA_ADMIN ? voltar : PAGINA_LOJA;
+    }
+
     /**
      * Chamar no <head> das páginas protegidas: esconde a página enquanto confere a sessão;
-     * sem login, volta para o login; logado, mostra o nome do usuário e chama aoEntrar(usuario), se houver.
+     * sem login, volta para o login; com o perfil errado, vai para a área certa (cliente na loja,
+     * admin no painel); senão mostra o nome do usuário e chama aoEntrar(usuario), se houver.
      */
-    function exigirLogin(aoEntrar) {
+    function exigirLogin(aoEntrar, perfil) {
+        const perfilExigido = perfil || PERFIL.CLIENTE;
         const html = document.documentElement;
         html.style.visibility = 'hidden';
         pronto.then(usuario => {
             if (!usuario) {
                 const destino = window.location.pathname.split('/').pop() + window.location.hash;
                 window.location.replace(PAGINA_LOGIN + '?voltar=' + encodeURIComponent(destino));
+                return;
+            }
+            if (usuario.idPerfil !== perfilExigido) {
+                window.location.replace(paginaInicial(usuario));
                 return;
             }
             const exibir = () => {
@@ -191,9 +215,51 @@
         });
     }
 
+    /** Grava o pedido finalizado no carrinho e devolve o número dele. */
+    async function registrarPedido(usuario, dados) {
+        const numero = Math.floor(100000 + Math.random() * 900000);
+        const pedido = Object.assign({
+            idPedido: numero,
+            idCliente: auth.currentUser.uid,
+            idEndereco: 0,
+            dataPedido: agora(),
+            status: STATUS_PEDIDO[0],
+            nomeCliente: usuario.nome,
+            emailCliente: usuario.email
+        }, dados);
+        try {
+            await db.collection(COLECAO_PEDIDOS).add(pedido);
+        } catch (e) {
+            throw new Error(mensagemDeErro(e));
+        }
+        return numero;
+    }
+
+    /** Painel: todos os pedidos, do mais recente para o mais antigo (cada um com o id do documento em "ref"). */
+    async function listarPedidos() {
+        const snap = await db.collection(COLECAO_PEDIDOS).orderBy('dataPedido', 'desc').get();
+        return snap.docs.map(d => Object.assign({ ref: d.id }, d.data()));
+    }
+
+    async function alterarStatusPedido(ref, status) {
+        try {
+            await db.collection(COLECAO_PEDIDOS).doc(ref).update({ status });
+        } catch (e) {
+            throw new Error(mensagemDeErro(e));
+        }
+    }
+
+    /** Painel: clientes cadastrados, do mais recente para o mais antigo. */
+    async function listarClientes() {
+        const snap = await db.collection(COLECAO).where('idPerfil', '==', PERFIL.CLIENTE).get();
+        return snap.docs.map(d => d.data())
+            .sort((a, b) => (b.dataCadastro || '').localeCompare(a.dataCadastro || ''));
+    }
+
     window.PetLarAuth = {
         EMAIL_VALIDO,
         PERFIL,
+        STATUS_PEDIDO,
         configurado,
         pronto,
         entrar,
@@ -201,6 +267,12 @@
         recuperarSenha,
         atualizarPerfil,
         sair,
-        exigirLogin
+        ehAdmin,
+        paginaInicial,
+        exigirLogin,
+        registrarPedido,
+        listarPedidos,
+        alterarStatusPedido,
+        listarClientes
     };
 })();
