@@ -668,6 +668,9 @@
             if (painelAtivo) {
                 painelAtivo.style.display = 'block';
             }
+
+            // O PIX tem 5% de desconto: refaz o resumo
+            atualizarTotaisGerais(obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0));
         }
 
         function copiarPix() {
@@ -699,8 +702,12 @@
                             <span id="valor-frete-display">Grátis</span>
                         </div>
                         <div class="linha-val" id="desconto-linha" style="display: none; color: var(--success-color);">
-                            <span>Desconto aplicado</span>
+                            <span>Cupom PETLAR10 (10%)</span>
                             <span>- R$ <span id="valor-desconto">0.00</span></span>
+                        </div>
+                        <div class="linha-val" id="desconto-pix-linha" style="display: none; color: var(--success-color);">
+                            <span>Desconto PIX (5%)</span>
+                            <span>- R$ <span id="valor-desconto-pix">0.00</span></span>
                         </div>
                     </div>
 
@@ -727,7 +734,15 @@
     <!-- SCRIPT DE GERENCIAMENTO DO CARRINHO -->
     <script>
     let freteAtual = 0;
-    let descontoAplicado = 0;
+    let cupomAplicado = false;
+
+    /** Mesmas regras do app: cupom PETLAR10 = 10% dos produtos; PIX = mais 5% sobre o valor já com o cupom. */
+    function calcularDescontos(subtotalProdutos) {
+        const cupom = cupomAplicado ? subtotalProdutos * 0.10 : 0;
+        const pagamento = document.querySelector('input[name="forma_pagamento"]:checked');
+        const pix = pagamento && pagamento.value === 'pix' ? (subtotalProdutos - cupom) * 0.05 : 0;
+        return { cupom, pix, total: cupom + pix };
+    }
 
     window.addEventListener('DOMContentLoaded', carregarCarrinho);
 
@@ -840,21 +855,19 @@
         const cupom = document.getElementById('cupom-input').value.trim().toUpperCase();
         const subtotalProdutos = obterCarrinho().reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
         
-        if (cupom === 'PETLAR10') {
-            descontoAplicado = subtotalProdutos * 0.10;
-            document.getElementById('desconto-linha').style.display = 'flex';
-            document.getElementById('valor-desconto').textContent = descontoAplicado.toFixed(2);
-            alert('Cupom de 10% aplicado com sucesso!');
-        } else {
-            alert('Cupom inválido ou expirado.');
-            descontoAplicado = 0;
-            document.getElementById('desconto-linha').style.display = 'none';
-        }
+        cupomAplicado = cupom === 'PETLAR10';
+        alert(cupomAplicado ? 'Cupom de 10% aplicado com sucesso!' : 'Cupom inválido ou expirado.');
         atualizarTotaisGerais(subtotalProdutos);
     }
 
     function atualizarTotaisGerais(subtotalProdutos) {
-        let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
+        const descontos = calcularDescontos(subtotalProdutos);
+        document.getElementById('desconto-linha').style.display = descontos.cupom > 0 ? 'flex' : 'none';
+        document.getElementById('valor-desconto').textContent = descontos.cupom.toFixed(2);
+        document.getElementById('desconto-pix-linha').style.display = descontos.pix > 0 ? 'flex' : 'none';
+        document.getElementById('valor-desconto-pix').textContent = descontos.pix.toFixed(2);
+
+        let totalGeral = subtotalProdutos + freteAtual - descontos.total;
         if (totalGeral < 0) totalGeral = 0;
 
         document.getElementById('total-preco').textContent = totalGeral.toFixed(2);
@@ -904,7 +917,8 @@
     const formaPagamentoTexto = opcaoPagamento ? opcaoPagamento.nextElementSibling.querySelector('strong').innerText : 'Não informada';
 
     const subtotalProdutos = carrinho.reduce((acc, p) => acc + (p.preco * p.quantidade), 0);
-    let totalGeral = subtotalProdutos + freteAtual - descontoAplicado;
+    const descontos = calcularDescontos(subtotalProdutos);
+    let totalGeral = subtotalProdutos + freteAtual - descontos.total;
     if (totalGeral < 0) totalGeral = 0;
 
     // Grava o pedido no Firestore para aparecer no painel administrativo (igual ao app).
@@ -916,7 +930,7 @@
         const usuario = await PetLarAuth.pronto;
         numeroPedido = await PetLarAuth.registrarPedido(usuario, {
             subtotal: centavos(subtotalProdutos),
-            desconto: centavos(descontoAplicado),
+            desconto: centavos(descontos.total),
             frete: freteAtual,
             total: centavos(totalGeral),
             formaPagamento: formaPagamentoTexto,
